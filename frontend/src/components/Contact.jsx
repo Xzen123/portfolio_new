@@ -1,17 +1,45 @@
 import { useState } from 'react';
 
+const CONTACT_LINKS = {
+  github: 'https://github.com/Xzen123',
+  linkedin: 'https://www.linkedin.com/in/alok-kumar-9958b1266/',
+  email: 'mailto:alokcse03@gmail.com',
+  phone: 'tel:9508397337',
+  whatsapp: 'https://wa.me/919508397337',
+};
+
+const CONTACT_API_URL = 'http://localhost:5000/api/contact';
+
 export default function Contact() {
   const [form, setForm] = useState({ name: '', email: '', message: '' });
   const [status, setStatus] = useState('idle'); // idle | sending | sent | error
+  const [errorMsg, setErrorMsg] = useState('');
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setStatus('sending');
-    // Simulate send (replace with actual API call)
-    await new Promise((r) => setTimeout(r, 1200));
-    setStatus('sent');
-    setForm({ name: '', email: '', message: '' });
-    setTimeout(() => setStatus('idle'), 4000);
+    setErrorMsg('');
+
+    try {
+      const res = await fetch(CONTACT_API_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(form),
+        signal: AbortSignal.timeout(12000),
+      });
+
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        throw new Error(data.error || 'Failed to send message.');
+      }
+
+      setStatus('sent');
+      setForm({ name: '', email: '', message: '' });
+      setTimeout(() => setStatus('idle'), 4000);
+    } catch (err) {
+      setStatus('error');
+      setErrorMsg(err.message || 'Failed to send message.');
+    }
   };
 
   const inputStyle = {
@@ -123,6 +151,18 @@ export default function Contact() {
                 {status === 'sending' ? 'SENDING...' : 'SEND_PACKET'}
               </button>
             </div>
+
+            {status === 'error' && (
+              <div style={{
+                marginTop: 14,
+                fontFamily: "'Roboto Mono', monospace",
+                fontSize: 11,
+                color: 'var(--color-secondary)',
+                letterSpacing: '0.03em',
+              }}>
+                ERROR: {errorMsg}
+              </div>
+            )}
           </form>
         )}
       </div>
@@ -130,11 +170,13 @@ export default function Contact() {
       {/* Social Links */}
       <div style={{ display: 'flex', justifyContent: 'center', gap: 24, marginTop: 32 }}>
         {[
-          { label: '[ GITHUB ]', href: 'https://github.com/Xzen123' },
-          { label: '[ LINKEDIN ]', href: 'https://linkedin.com/in/alok-kumar-chaudhary' },
-          { label: '[ EMAIL ]', href: 'mailto:alok@nitpatna.ac.in' },
+          { label: '[ GITHUB ]', href: CONTACT_LINKS.github },
+          { label: '[ LINKEDIN ]', href: CONTACT_LINKS.linkedin },
+          { label: '[ PHONE ]', href: CONTACT_LINKS.phone },
+          { label: '[ WHATSAPP ]', href: CONTACT_LINKS.whatsapp },
+          { label: '[ EMAIL ]', href: CONTACT_LINKS.email },
         ].map((link) => (
-          <a key={link.label} href={link.href} style={{
+          <a key={link.label} href={link.href} target="_blank" rel="noreferrer" style={{
             fontFamily: "'Roboto Mono', monospace",
             fontSize: 12,
             color: 'var(--color-primary)',

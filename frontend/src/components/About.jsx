@@ -1,3 +1,5 @@
+import { useEffect, useState } from 'react';
+
 const S = {
   section: {
     padding: '80px 24px',
@@ -28,11 +30,72 @@ const S = {
   },
 };
 
+const GITHUB_USERNAME = 'Xzen123';
+const DEFAULT_GITHUB_STATS = {
+  repos: '15',
+  stars: '2+',
+  forks: '1+',
+};
+
 export default function About() {
+  const [githubStats, setGithubStats] = useState(DEFAULT_GITHUB_STATS);
+  const [lastSyncedAt, setLastSyncedAt] = useState(null);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    const loadGithubStats = async () => {
+      try {
+        const allRepos = [];
+        let page = 1;
+
+        while (true) {
+          const response = await fetch(
+            `https://api.github.com/users/${GITHUB_USERNAME}/repos?per_page=100&page=${page}`
+          );
+
+          if (!response.ok) {
+            throw new Error(`GitHub API responded with ${response.status}`);
+          }
+
+          const repos = await response.json();
+          allRepos.push(...repos);
+
+          if (repos.length < 100) {
+            break;
+          }
+
+          page += 1;
+        }
+
+        const ownRepos = allRepos.filter((repo) => !repo.fork);
+        const totalStars = ownRepos.reduce((sum, repo) => sum + (repo.stargazers_count || 0), 0);
+        const totalForks = ownRepos.reduce((sum, repo) => sum + (repo.forks_count || 0), 0);
+
+        if (isMounted) {
+          setGithubStats({
+            repos: String(ownRepos.length),
+            stars: totalStars > 0 ? `${totalStars}+` : '0',
+            forks: totalForks > 0 ? `${totalForks}+` : '0',
+          });
+          setLastSyncedAt(new Date());
+        }
+      } catch {
+        // Keep fallback stats if API fails or rate-limits.
+      }
+    };
+
+    loadGithubStats();
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
   const stats = [
-    { label: 'REPOS_SHIPPED', value: '15' },
-    { label: 'GITHUB_STARS', value: '2+' },
-    { label: 'COMMUNITY_FORKS', value: '1+' },
+    { label: 'REPOS_SHIPPED', value: githubStats.repos },
+    { label: 'GITHUB_STARS', value: githubStats.stars },
+    { label: 'COMMUNITY_FORKS', value: githubStats.forks },
     { label: 'COFFEE_CONSUMED', value: '∞' },
   ];
 
@@ -112,6 +175,20 @@ export default function About() {
               }}>{s.label}</div>
             </div>
           ))}
+
+          <div style={{
+            gridColumn: '1 / -1',
+            marginTop: 6,
+            textAlign: 'center',
+            fontFamily: "'Roboto Mono', monospace",
+            fontSize: 10,
+            color: 'var(--color-text-dim)',
+            letterSpacing: '0.08em',
+          }}>
+            {lastSyncedAt
+              ? `LAST_SYNCED_FROM_GITHUB: ${lastSyncedAt.toLocaleString('en-IN', { hour12: true })}`
+              : 'LAST_SYNCED_FROM_GITHUB: PENDING'}
+          </div>
         </div>
       </div>
     </section>

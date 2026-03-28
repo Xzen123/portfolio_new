@@ -1,96 +1,53 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import ProjectModal from './ProjectModal';
 
-const projects = [
+const PROJECTS_API_URL = 'http://localhost:5000/api/projects?username=Xzen123';
+
+const FALLBACK_PROJECTS = [
+  {
+    name: 'PORTFOLIO_CORE.EXE',
+    desc: 'Fallback project list loaded because live server data is currently unavailable.',
+    fullDesc: 'This is a safety fallback entry shown when the projects API is down or unreachable. It keeps the projects section usable during backend outages.',
+    features: [
+      'Visible during API/server failure only',
+      'Ensures projects section never renders empty',
+      'Allows modal and card interactions to continue',
+      'Helps maintain a stable portfolio UX',
+    ],
+    stack: ['React', 'Vite', 'Failover'],
+    demo: 'https://github.com/Xzen123',
+    repo: 'https://github.com/Xzen123',
+    img: 'https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=800&auto=format&fit=crop&q=60',
+  },
   {
     name: 'BUNK_CALCULATOR.EXE',
-    desc: 'Smart attendance tracker for students to calculate exactly how many classes they can safely skip while maintaining target attendance.',
-    fullDesc: 'Bunk Calculator is a student utility tool that eliminates the guesswork in attendance management. Enter your current attendance stats and target percentage, and the app instantly computes how many lectures you can safely miss — or how many consecutive classes you need to attend to recover. Built with vanilla JavaScript for maximum performance with zero overhead.',
+    desc: 'Attendance utility to estimate safe leaves and required classes.',
+    fullDesc: 'Bunk Calculator helps students instantly decide safe leaves and class recovery plans. It is optimized for quick everyday usage.',
     features: [
-      'Instant calculation of safe-to-bunk and must-attend lectures',
-      'Target attendance percentage customization (75%, 80%, etc.)',
-      'Clean, responsive UI with real-time updates as you type',
-      'Zero dependencies — pure vanilla JavaScript, HTML & CSS',
+      'Safe leave calculation',
+      'Recovery class estimation',
+      'Target percentage support',
+      'Simple fast UI',
     ],
-    stack: ['JavaScript', 'HTML5', 'CSS3'],
+    stack: ['JavaScript', 'HTML', 'CSS'],
     demo: 'https://xzen123.github.io/Bunk-calculator',
     repo: 'https://github.com/Xzen123/Bunk-calculator',
     img: 'https://images.unsplash.com/photo-1606326608606-aa0b62935f2b?w=800&auto=format&fit=crop&q=60',
   },
   {
-    name: 'CAMPUS_PATH.EXE',
-    desc: 'A TypeScript-powered campus navigation and pathfinding application built for NIT Patna to help students navigate the campus efficiently.',
-    fullDesc: 'CampusPath is an interactive campus map and navigation tool developed for NIT Patna. It leverages graph-based pathfinding algorithms to compute the shortest route between any two campus locations. Built with TypeScript for type safety, it features an interactive map interface with building annotations, amenity markers, and turn-by-turn route guidance.',
+    name: 'SITE.EXE',
+    desc: 'Minimal link hub and profile landing page project.',
+    fullDesc: 'A lightweight and fast profile landing page with clean visual design and responsive behavior.',
     features: [
-      'Graph-based shortest-path algorithm (Dijkstra\'s implementation)',
-      'Interactive campus map with annotated buildings and amenities',
-      'Search by building name, department, or category',
-      'TypeScript-powered codebase for robust type safety',
+      'Responsive layout',
+      'Clean profile links',
+      'Fast static hosting',
+      'Minimal dependencies',
     ],
-    stack: ['TypeScript', 'React', 'Graph Algorithms'],
-    demo: 'https://github.com/Xzen123/CampusPath',
-    repo: 'https://github.com/Xzen123/CampusPath',
-    img: 'https://images.unsplash.com/photo-1562774053-701939374585?w=800&auto=format&fit=crop&q=60',
-  },
-  {
-    name: 'CITSCI_NET.EXE',
-    desc: 'Citizen science social network platform for SSFC that connects researchers and volunteers to collaborate on environmental data collection projects.',
-    fullDesc: 'CitSciNet_SSFC is a collaborative citizen science platform that bridges the gap between professional researchers and citizen volunteers. The platform enables project creation, participant enrollment, real-time data submission, and community discussions. Built for the Smart Solutions for Future Challenges (SSFC) competition, the project has attracted community forks and is actively maintained.',
-    features: [
-      'Project creation and volunteer enrollment workflow',
-      'Real-time data submission portal for field participants',
-      'Community discussion boards with threaded comments',
-      'Role-based access (Researcher / Volunteer / Admin)',
-    ],
-    stack: ['JavaScript', 'Node.js', 'Express', 'MongoDB'],
-    demo: 'https://github.com/Xzen123/CitSciNet_SSFC',
-    repo: 'https://github.com/Xzen123/CitSciNet_SSFC',
-    img: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=800&auto=format&fit=crop&q=60',
-  },
-  {
-    name: 'PDF_SCRAPPER.EXE',
-    desc: 'Python-powered PDF scraping and extraction tool that intelligently parses academic and structured documents into clean, usable data.',
-    fullDesc: 'pdf_scrapper_v01 is a Python utility for extracting structured content from PDF documents. It handles multi-column layouts, embedded tables, and academic paper formats — outputting clean JSON or CSV data ready for downstream processing. Designed primarily for extracting data from course materials, research papers, and academic syllabi at NIT Patna.',
-    features: [
-      'Multi-column PDF layout detection and linearization',
-      'Table extraction with row/column structure preservation',
-      'Academic document parsing (syllabus, papers, notes)',
-      'JSON and CSV output formats for pipeline integration',
-    ],
-    stack: ['Python', 'PyMuPDF', 'pdfplumber', 'pandas'],
-    demo: 'https://github.com/Xzen123/pdf_scrapper_v01',
-    repo: 'https://github.com/Xzen123/pdf_scrapper_v01',
-    img: 'https://images.unsplash.com/photo-1568209865332-a15790aed756?w=800&auto=format&fit=crop&q=60',
-  },
-  {
-    name: 'LINK_SITE.EXE',
-    desc: 'A minimal, blazing-fast Linktree clone built with pure CSS — a central hub to showcase all social profiles and important links in style.',
-    fullDesc: 'Site is a clean, zero-JavaScript Linktree alternative built entirely with HTML and CSS. It features a glassmorphism-inspired card design, animated gradient backgrounds, smooth hover transitions, and a responsive layout that looks great on all devices. Zero build tools, zero dependencies — just drop it on any static host.',
-    features: [
-      'Zero JavaScript — pure HTML & CSS implementation',
-      'Glassmorphism card design with backdrop blur',
-      'Animated gradient background with CSS keyframes',
-      'Responsive design — mobile-first layout',
-    ],
-    stack: ['HTML5', 'CSS3', 'CSS Animations'],
-    demo: 'https://xzen123.github.io/site',
+    stack: ['HTML', 'CSS'],
+    demo: 'https://xzen123.github.io/site/',
     repo: 'https://github.com/Xzen123/site',
     img: 'https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=800&auto=format&fit=crop&q=60',
-  },
-  {
-    name: 'NITP_NOTES.EXE',
-    desc: 'A curated open-source repository of NIT Patna CSE notes, PYQs, and syllabi for all semesters — 2 stars and used by batches.',
-    fullDesc: 'NITP-CSE-1ST-SEM is a comprehensive open-source knowledge base for NIT Patna Computer Science students. It aggregates previous year questions (PYQs), handwritten notes, official syllabi, and reference materials across all subjects of the first year. This repository has grown to become a go-to resource for incoming batches, earning 2 stars and several contributions.',
-    features: [
-      'Complete PYQ archive for all first-semester CSE subjects',
-      'Handwritten and typed notes organized by module',
-      'Official NIT Patna syllabus documents included',
-      'Open contributions welcome — growing community resource',
-    ],
-    stack: ['Markdown', 'PDF', 'Open Source'],
-    demo: 'https://github.com/Xzen123/NITP-CSE-1ST-SEM',
-    repo: 'https://github.com/Xzen123/NITP-CSE-1ST-SEM',
-    img: 'https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=800&auto=format&fit=crop&q=60',
   },
 ];
 
@@ -223,7 +180,53 @@ function ProjectCard({ project, onClick }) {
 }
 
 export default function Projects() {
+  const [projects, setProjects] = useState([]);
   const [selectedProject, setSelectedProject] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+  const [sourceLabel, setSourceLabel] = useState('github');
+
+  useEffect(() => {
+    let isMounted = true;
+
+    const loadProjects = async () => {
+      try {
+        setLoading(true);
+        setError('');
+
+        const res = await fetch(PROJECTS_API_URL, { signal: AbortSignal.timeout(10000) });
+        if (!res.ok) {
+          throw new Error(`Projects API returned ${res.status}`);
+        }
+
+        const data = await res.json();
+        if (!Array.isArray(data.projects)) {
+          throw new Error('Invalid projects payload');
+        }
+
+        if (isMounted) {
+          setProjects(data.projects);
+          setSourceLabel(data.source || 'github');
+        }
+      } catch {
+        if (isMounted) {
+          setError('Unable to fetch projects from server. Showing fallback project list.');
+          setProjects(FALLBACK_PROJECTS);
+          setSourceLabel('fallback');
+        }
+      } finally {
+        if (isMounted) {
+          setLoading(false);
+        }
+      }
+    };
+
+    loadProjects();
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   return (
     <section id="projects" style={{ padding: '80px 24px', maxWidth: 1200, margin: '0 auto' }}>
@@ -232,8 +235,32 @@ export default function Projects() {
         <h2 style={{ fontFamily: "'Roboto Mono', monospace", color: 'var(--color-primary)', fontSize: 20, fontWeight: 400, textTransform: 'uppercase', letterSpacing: '0.1em', textShadow: '0 0 15px var(--color-glow)', margin: 0 }}>ls -la ./projects</h2>
       </div>
       <div style={{ fontFamily: "'Roboto Mono', monospace", fontSize: 11, color: 'var(--color-text-dim)', marginBottom: 36, letterSpacing: '0.05em' }}>
-        // 6 repos · github.com/Xzen123 · NIT Patna CSE Undergrad
+        // {projects.length} repos · github.com/Xzen123 · source: {sourceLabel}
       </div>
+
+      {loading && (
+        <div style={{
+          fontFamily: "'Roboto Mono', monospace",
+          fontSize: 12,
+          color: 'var(--color-text-dim)',
+          marginBottom: 24,
+          letterSpacing: '0.08em',
+        }}>
+          // Syncing projects from GitHub and Gemini...
+        </div>
+      )}
+
+      {error && (
+        <div style={{
+          fontFamily: "'Roboto Mono', monospace",
+          fontSize: 12,
+          color: 'var(--color-secondary)',
+          marginBottom: 24,
+          letterSpacing: '0.05em',
+        }}>
+          // {error}
+        </div>
+      )}
 
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: 24 }}>
         {projects.map((p) => (

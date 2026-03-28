@@ -16,6 +16,10 @@ const TYPING_PHRASES = [
   'Terminal Enthusiast',
 ];
 
+const PROFILE_LINKS = {
+  resume: 'https://drive.google.com/file/d/18B0hr3oMRD2w-ceqtS62Bai0h8VTaSjl/view?usp=sharing',
+};
+
 export default function Hero() {
   const [displayed, setDisplayed] = useState('');
   const [phraseIdx, setPhraseIdx] = useState(0);
@@ -169,6 +173,36 @@ export default function Hero() {
             }}
           >
             [ CONTACT_ME ]
+          </a>
+          <a
+            href={PROFILE_LINKS.resume}
+            target="_blank"
+            rel="noreferrer"
+            style={{
+              fontFamily: "'Roboto Mono', monospace",
+              background: 'transparent',
+              color: 'var(--color-primary)',
+              padding: '13px 32px',
+              fontSize: 12,
+              fontWeight: 700,
+              letterSpacing: '0.15em',
+              textTransform: 'uppercase',
+              textDecoration: 'none',
+              border: '1px solid var(--color-primary)',
+              transition: 'all 0.2s ease',
+              display: 'inline-block',
+              whiteSpace: 'nowrap',
+            }}
+            onMouseEnter={e => {
+              e.currentTarget.style.boxShadow = '0 0 20px var(--color-glow)';
+              e.currentTarget.style.transform = 'translateY(-2px)';
+            }}
+            onMouseLeave={e => {
+              e.currentTarget.style.boxShadow = 'none';
+              e.currentTarget.style.transform = 'translateY(0)';
+            }}
+          >
+            [ DOWNLOAD_CV ]
           </a>
         </div>
 

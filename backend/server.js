@@ -4,16 +4,22 @@ const cors = require('cors');
 require('dotenv').config();
 
 const themeRoutes = require('./routes/theme');
+const projectRoutes = require('./routes/projects');
+const contactRoutes = require('./routes/contact');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
 
 // Middleware
-app.use(cors({ origin: 'http://xzen-alok.tech' }));
+app.use(cors({
+  origin: ['http://xzen-alok.tech', 'http://localhost:5173', 'http://127.0.0.1:5173'],
+}));
 app.use(express.json());
 
 // Routes
 app.use('/api/theme', themeRoutes);
+app.use('/api/projects', projectRoutes);
+app.use('/api/contact', contactRoutes);
 
 // Health check
 app.get('/api/health', (req, res) => {
