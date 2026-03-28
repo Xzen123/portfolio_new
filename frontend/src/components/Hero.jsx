@@ -1,0 +1,189 @@
+import { useEffect, useState } from 'react';
+import { useTheme } from '../context/ThemeContext';
+
+const ASCII_ALOK = `
+ █████  ██       ██████  ██   ██ 
+██   ██ ██      ██    ██ ██  ██  
+███████ ██      ██    ██ █████   
+██   ██ ██      ██    ██ ██  ██  
+██   ██ ███████  ██████  ██   ██ `;
+
+const TYPING_PHRASES = [
+  'Full Stack Developer',
+  'Problem Solver',
+  'Open Source Contributor',
+  'UI Craftsman',
+  'Terminal Enthusiast',
+];
+
+export default function Hero() {
+  const [displayed, setDisplayed] = useState('');
+  const [phraseIdx, setPhraseIdx] = useState(0);
+  const [deleting, setDeleting] = useState(false);
+  const { currentTheme } = useTheme();
+  const isMinimal = currentTheme?.minimal;
+
+  useEffect(() => {
+    const phrase = TYPING_PHRASES[phraseIdx];
+    let timeout;
+    if (!deleting && displayed.length < phrase.length) {
+      timeout = setTimeout(() => setDisplayed(phrase.slice(0, displayed.length + 1)), 80);
+    } else if (!deleting && displayed.length === phrase.length) {
+      timeout = setTimeout(() => setDeleting(true), 1800);
+    } else if (deleting && displayed.length > 0) {
+      timeout = setTimeout(() => setDisplayed(displayed.slice(0, -1)), 40);
+    } else if (deleting && displayed.length === 0) {
+      setDeleting(false);
+      setPhraseIdx((i) => (i + 1) % TYPING_PHRASES.length);
+    }
+    return () => clearTimeout(timeout);
+  }, [displayed, deleting, phraseIdx]);
+
+  return (
+    <section
+      id="hero"
+      style={{
+        minHeight: '100vh',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: '80px 24px 40px',
+      }}
+    >
+      {/* Centered inner container */}
+      <div style={{
+        width: '100%',
+        maxWidth: 760,
+        textAlign: 'center',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+      }}>
+
+        {/* ASCII Art */}
+        <pre style={{
+          fontFamily: "'Roboto Mono', monospace",
+          color: 'var(--color-primary)',
+          fontSize: 'clamp(8px, 1.6vw, 15px)',
+          lineHeight: 1.15,
+          margin: '0 0 32px',
+          textShadow: isMinimal ? 'none' : '0 0 20px var(--color-glow)',
+          whiteSpace: 'pre',
+          overflow: 'hidden',
+          display: 'inline-block',
+          textAlign: 'left',
+        }}>
+          {ASCII_ALOK}
+        </pre>
+
+        {/* Typing Headline */}
+        <h1 style={{
+          fontFamily: "'Roboto Mono', monospace",
+          color: 'var(--color-primary)',
+          fontSize: 'clamp(20px, 4vw, 36px)',
+          fontWeight: 400,
+          margin: '0 0 20px',
+          textShadow: isMinimal ? 'none' : '0 0 15px var(--color-glow)',
+          lineHeight: 1.3,
+        }}>
+          <span style={{ color: 'var(--color-secondary)' }}>&gt; </span>
+          {displayed}
+          <span className="blinking-cursor">█</span>
+        </h1>
+
+        {/* Tagline */}
+        <p style={{
+          fontFamily: "'Roboto Mono', monospace",
+          color: 'var(--color-text-dim)',
+          fontSize: 13,
+          lineHeight: 1.8,
+          maxWidth: 540,
+          margin: '0 0 40px',
+          textAlign: 'center',
+        }}>
+          Initializing neural interface... System online. Building scalable apps,<br />
+          crafting elegant UIs, and writing code that doesn&apos;t just work — it performs.
+        </p>
+
+        {/* CTA Buttons — centered row */}
+        <div style={{
+          display: 'flex',
+          gap: 16,
+          flexWrap: 'wrap',
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}>
+          <a
+            href="#projects"
+            style={{
+              fontFamily: "'Roboto Mono', monospace",
+              background: 'var(--color-primary)',
+              color: 'var(--color-bg)',
+              padding: '13px 32px',
+              fontSize: 12,
+              fontWeight: 700,
+              letterSpacing: '0.15em',
+              textTransform: 'uppercase',
+              textDecoration: 'none',
+              border: '1px solid var(--color-primary)',
+              boxShadow: isMinimal ? 'none' : '0 0 20px var(--color-glow)',
+              transition: 'all 0.2s ease',
+              display: 'inline-block',
+              whiteSpace: 'nowrap',
+            }}
+            onMouseEnter={e => {
+              e.currentTarget.style.boxShadow = '0 0 40px var(--color-glow)';
+              e.currentTarget.style.transform = 'translateY(-2px)';
+            }}
+            onMouseLeave={e => {
+              e.currentTarget.style.boxShadow = isMinimal ? 'none' : '0 0 20px var(--color-glow)';
+              e.currentTarget.style.transform = 'translateY(0)';
+            }}
+          >
+            [ INITIALIZE_PROJECTS ]
+          </a>
+          <a
+            href="#contact"
+            style={{
+              fontFamily: "'Roboto Mono', monospace",
+              background: 'transparent',
+              color: 'var(--color-secondary)',
+              padding: '13px 32px',
+              fontSize: 12,
+              fontWeight: 700,
+              letterSpacing: '0.15em',
+              textTransform: 'uppercase',
+              textDecoration: 'none',
+              border: '1px solid var(--color-secondary)',
+              transition: 'all 0.2s ease',
+              display: 'inline-block',
+              whiteSpace: 'nowrap',
+            }}
+            onMouseEnter={e => {
+              e.currentTarget.style.boxShadow = '0 0 20px var(--color-glow-secondary)';
+              e.currentTarget.style.transform = 'translateY(-2px)';
+            }}
+            onMouseLeave={e => {
+              e.currentTarget.style.boxShadow = 'none';
+              e.currentTarget.style.transform = 'translateY(0)';
+            }}
+          >
+            [ CONTACT_ME ]
+          </a>
+        </div>
+
+        {/* Scroll hint */}
+        <div style={{
+          marginTop: 64,
+          fontFamily: "'Roboto Mono', monospace",
+          fontSize: 11,
+          color: 'var(--color-text-dim)',
+          letterSpacing: '0.2em',
+          animation: 'fadeUpDown 2s ease-in-out infinite',
+        }}>
+          ↓ SCROLL TO EXPLORE
+        </div>
+      </div>
+    </section>
+  );
+}

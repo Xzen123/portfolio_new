@@ -1,0 +1,185 @@
+.theme-switcher {
+  position: fixed;
+  bottom: 60px;
+  right: 24px;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+}
+
+.theme-toggle-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--color-card);
+  border: 1px solid var(--color-border);
+  color: var(--color-primary);
+  padding: 8px 14px;
+  font-family: 'Roboto Mono', monospace;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  cursor: pointer;
+  text-transform: uppercase;
+  transition: all 0.2s ease;
+  box-shadow: 0 0 15px var(--color-glow);
+}
+.theme-toggle-btn:hover,
+.theme-toggle-btn.active {
+  background: var(--color-primary);
+  color: #000;
+  box-shadow: 0 0 25px var(--color-glow);
+  border-color: var(--color-primary);
+}
+.theme-toggle-icon {
+  font-size: 14px;
+}
+
+/* Panel */
+.theme-panel {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  box-shadow: 0 0 40px var(--color-glow);
+  width: 240px;
+  transform: translateY(10px) scale(0.95);
+  opacity: 0;
+  pointer-events: none;
+  transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  transform-origin: bottom right;
+}
+.theme-panel.open {
+  transform: translateY(0) scale(1);
+  opacity: 1;
+  pointer-events: all;
+}
+
+.theme-panel-header {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 10px 14px;
+  background: var(--color-card);
+  border-bottom: 1px solid var(--color-border);
+  font-family: 'Roboto Mono', monospace;
+  font-size: 11px;
+}
+.theme-panel-header .prompt { color: var(--color-secondary); font-weight: 700; }
+.theme-panel-header .cmd { color: var(--color-primary); flex: 1; }
+.close-btn {
+  background: none;
+  border: none;
+  color: var(--color-text-dim);
+  cursor: pointer;
+  font-size: 12px;
+  padding: 0;
+  line-height: 1;
+  transition: color 0.2s;
+}
+.close-btn:hover { color: var(--color-primary); }
+
+.theme-panel-body {
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.theme-option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  background: transparent;
+  border: 1px solid transparent;
+  color: var(--color-text-dim);
+  font-family: 'Roboto Mono', monospace;
+  font-size: 12px;
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.15s ease;
+  width: 100%;
+}
+.theme-option:hover {
+  border-color: var(--opt-primary);
+  color: var(--opt-primary);
+  background: color-mix(in srgb, var(--opt-primary) 8%, transparent);
+  box-shadow: 0 0 12px var(--opt-glow);
+}
+.theme-option.active {
+  border-color: var(--opt-primary);
+  color: var(--opt-primary);
+  background: color-mix(in srgb, var(--opt-primary) 12%, transparent);
+  box-shadow: 0 0 15px var(--opt-glow);
+}
+
+.theme-swatch {
+  display: flex;
+  gap: 3px;
+  flex-shrink: 0;
+}
+.swatch-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  display: block;
+}
+.theme-icon { font-size: 13px; flex-shrink: 0; }
+.theme-name { flex: 1; font-weight: 600; letter-spacing: 0.05em; }
+.active-badge {
+  font-size: 9px;
+  color: var(--opt-primary);
+  letter-spacing: 0.05em;
+  flex-shrink: 0;
+}
+
+.theme-panel-footer {
+  padding: 8px 14px;
+  border-top: 1px solid var(--color-border);
+  font-family: 'Roboto Mono', monospace;
+  font-size: 10px;
+  color: var(--color-text-dim);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+kbd {
+  background: var(--color-card);
+  border: 1px solid var(--color-border);
+  color: var(--color-primary);
+  padding: 1px 5px;
+  font-family: 'Roboto Mono', monospace;
+  font-size: 10px;
+}
+
+/* CRT Toggle inside panel */
+.theme-panel-crt {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  border-top: 1px solid var(--color-border);
+}
+
+.crt-toggle-btn {
+  font-family: 'Roboto Mono', monospace;
+  font-size: 11px;
+  padding: 4px 12px;
+  border: 1px solid var(--color-border);
+  background: transparent;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  letter-spacing: 0.05em;
+}
+.crt-toggle-btn.on {
+  color: var(--color-primary);
+  border-color: var(--color-primary);
+  box-shadow: 0 0 8px var(--color-glow);
+}
+.crt-toggle-btn.off {
+  color: var(--color-text-dim);
+  border-color: var(--color-border);
+}
+.crt-toggle-btn:hover { opacity: 0.8; }
+

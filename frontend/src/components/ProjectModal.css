@@ -1,0 +1,96 @@
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(8px);
+  z-index: 5000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  animation: backdrop-in 0.2s ease;
+}
+@keyframes backdrop-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.modal-window {
+  width: 100%;
+  max-width: 780px;
+  max-height: 90vh;
+  overflow-y: auto;
+  background: var(--color-card);
+  border: 1px solid;
+  animation: modal-in 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  scrollbar-width: thin;
+}
+@keyframes modal-in {
+  from { transform: scale(0.85) translateY(40px); opacity: 0; }
+  to   { transform: scale(1) translateY(0);       opacity: 1; }
+}
+
+.modal-window.minimal {
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.modal-titlebar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 16px;
+  border-bottom: 1px solid;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.modal-close {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  padding: 0 4px;
+  transition: all 0.2s;
+  line-height: 1;
+}
+.modal-close:hover { color: var(--color-primary) !important; transform: scale(1.2); }
+
+.modal-hero {
+  position: relative;
+  aspect-ratio: 16/7;
+  overflow: hidden;
+}
+.modal-hero img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+.modal-hero:hover img { transform: scale(1.03); }
+
+.modal-hero-overlay {
+  position: absolute;
+  inset: 0;
+}
+
+.modal-hero-badge {
+  position: absolute;
+  bottom: 16px;
+  left: 16px;
+  font-family: 'Roboto Mono', monospace;
+  font-size: 11px;
+  padding: 4px 12px;
+  border: 1px solid;
+  letter-spacing: 0.05em;
+}
+
+.modal-content {
+  padding: 28px;
+}
+
+/* Scrollbar for modal */
+.modal-window::-webkit-scrollbar { width: 4px; }
+.modal-window::-webkit-scrollbar-track { background: transparent; }
+.modal-window::-webkit-scrollbar-thumb { background: var(--color-primary); }
