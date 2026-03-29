@@ -6,12 +6,27 @@ export default function Navbar() {
   const { currentTheme } = useTheme();
   const { minimize, toggleFullscreen, isFullscreen, crtEnabled, toggleCRT } = useWindow();
   const [scrolled, setScrolled] = useState(false);
+  const [isCompact, setIsCompact] = useState(false);
   const isMinimal = currentTheme?.minimal;
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
     window.addEventListener('scroll', onScroll);
     return () => window.removeEventListener('scroll', onScroll);
+  }, []);
+
+  useEffect(() => {
+    const media = window.matchMedia('(max-width: 980px)');
+    const sync = () => setIsCompact(media.matches);
+    sync();
+
+    if (media.addEventListener) {
+      media.addEventListener('change', sync);
+      return () => media.removeEventListener('change', sync);
+    }
+
+    media.addListener(sync);
+    return () => media.removeListener(sync);
   }, []);
 
   const navLinks = ['about', 'skills', 'experience', 'projects', 'contact'];
@@ -41,18 +56,19 @@ export default function Navbar() {
       transition: 'all 0.3s ease',
     }}>
       <div style={{
-        display: 'grid',
-        gridTemplateColumns: '200px 1fr 200px',
+        display: isCompact ? 'flex' : 'grid',
+        flexDirection: isCompact ? 'column' : 'row',
+        gridTemplateColumns: isCompact ? undefined : '200px 1fr 200px',
         alignItems: 'center',
-        height: 56,
-        padding: '0 20px',
+        minHeight: isCompact ? 92 : 56,
+        padding: isCompact ? '8px 12px 10px' : '0 20px',
         maxWidth: 1400,
         margin: '0 auto',
-        gap: 12,
+        gap: isCompact ? 8 : 12,
       }}>
 
         {/* LEFT: Window controls + CRT toggle */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8, justifyContent: isCompact ? 'center' : 'flex-start', width: isCompact ? '100%' : 'auto' }}>
           {/* Red – Minimize */}
           <button
             title="Minimize (dock)"
@@ -107,11 +123,11 @@ export default function Navbar() {
         </div>
 
         {/* CENTER: Logo */}
-        <div style={{ display: 'flex', justifyContent: 'center' }}>
+        <div style={{ display: 'flex', justifyContent: 'center', width: isCompact ? '100%' : 'auto' }}>
           <a href="#" style={{
             fontFamily: "'Roboto Mono', monospace",
             color: 'var(--color-primary)',
-            fontWeight: 700, fontSize: 13,
+            fontWeight: 700, fontSize: isCompact ? 12 : 13,
             letterSpacing: '0.08em',
             textDecoration: 'none',
             textShadow: isMinimal ? 'none' : '0 0 12px var(--color-glow)',
@@ -122,7 +138,16 @@ export default function Navbar() {
         </div>
 
         {/* RIGHT: Nav links */}
-        <nav style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 2, flexWrap: 'nowrap' }}>
+        <nav style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: isCompact ? 'flex-start' : 'flex-end',
+          gap: 2,
+          flexWrap: 'nowrap',
+          width: isCompact ? '100%' : 'auto',
+          overflowX: isCompact ? 'auto' : 'visible',
+          paddingBottom: isCompact ? 2 : 0,
+        }}>
           {navLinks.map((link) => (
             <a
               key={link}
@@ -131,10 +156,10 @@ export default function Navbar() {
                 fontFamily: "'Roboto Mono', monospace",
                 color: 'var(--color-primary)',
                 textDecoration: 'none',
-                fontSize: 10,
+                fontSize: isCompact ? 9 : 10,
                 letterSpacing: '0.08em',
                 textTransform: 'uppercase',
-                padding: '4px 7px',
+                padding: isCompact ? '4px 6px' : '4px 7px',
                 border: '1px solid transparent',
                 transition: 'all 0.2s ease',
                 whiteSpace: 'nowrap',

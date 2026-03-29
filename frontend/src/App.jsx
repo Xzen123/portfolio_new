@@ -18,7 +18,22 @@ import './App.css';
 function AppInner() {
   const { isMinimized } = useWindow();
   const [animClass, setAnimClass] = useState('');
+  const [isCompact, setIsCompact] = useState(false);
   const prevMinimizedRef = useRef(false);
+
+  useEffect(() => {
+    const media = window.matchMedia('(max-width: 980px)');
+    const sync = () => setIsCompact(media.matches);
+    sync();
+
+    if (media.addEventListener) {
+      media.addEventListener('change', sync);
+      return () => media.removeEventListener('change', sync);
+    }
+
+    media.addListener(sync);
+    return () => media.removeListener(sync);
+  }, []);
 
   useEffect(() => {
     // Play restore animation when transitioning from minimized → visible
@@ -40,7 +55,7 @@ function AppInner() {
       <CRTOverlay />
       <ThemeSwitcher />
       <Navbar />
-      <main style={{ paddingBottom: 60 }}>
+      <main style={{ paddingTop: isCompact ? 108 : 56, paddingBottom: isCompact ? 112 : 64 }}>
         <Hero />
         <About />
         <Skills />

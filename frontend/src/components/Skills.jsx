@@ -82,18 +82,33 @@ export default function Skills() {
             whiteSpace: 'pre-wrap',
           }}>
 {`{
-  `}<span style={{ color: 'var(--color-primary)' }}>"languages"</span>{`: [
-    `}<span style={{ color: 'var(--color-secondary)' }}>"TypeScript"</span>{`,
-    `}<span style={{ color: 'var(--color-secondary)' }}>"Python"</span>{`,
-    `}<span style={{ color: 'var(--color-secondary)' }}>"Go"</span>{`
-  ],
-  `}<span style={{ color: 'var(--color-primary)' }}>"frameworks"</span>{`: [
+  `}<span style={{ color: 'var(--color-primary)' }}>"frontend"</span>{`: [
     `}<span style={{ color: 'var(--color-secondary)' }}>"React"</span>{`,
-    `}<span style={{ color: 'var(--color-secondary)' }}>"Next.js"</span>{`,
-    `}<span style={{ color: 'var(--color-secondary)' }}>"FastAPI"</span>{`
+    `}<span style={{ color: 'var(--color-secondary)' }}>"Vite"</span>{`,
+    `}<span style={{ color: 'var(--color-secondary)' }}>"JavaScript"</span>{`,
+    `}<span style={{ color: 'var(--color-secondary)' }}>"CSS3"</span>{`
   ],
-  `}<span style={{ color: 'var(--color-primary)' }}>"status"</span>{`: `}<span style={{ color: 'var(--color-secondary)' }}>"ONLINE"</span>{`,
-  `}<span style={{ color: 'var(--color-primary)' }}>"uptime"</span>{`: `}<span style={{ color: 'var(--color-secondary)' }}>"99.999%"</span>{`
+  `}<span style={{ color: 'var(--color-primary)' }}>"backend"</span>{`: [
+    `}<span style={{ color: 'var(--color-secondary)' }}>"Node.js"</span>{`,
+    `}<span style={{ color: 'var(--color-secondary)' }}>"Express.js"</span>{`,
+    `}<span style={{ color: 'var(--color-secondary)' }}>"REST APIs"</span>{`,
+    `}<span style={{ color: 'var(--color-secondary)' }}>"Nodemailer"</span>{`
+  ],
+  `}<span style={{ color: 'var(--color-primary)' }}>"database"</span>{`: [
+    `}<span style={{ color: 'var(--color-secondary)' }}>"MongoDB"</span>{`,
+    `}<span style={{ color: 'var(--color-secondary)' }}>"Mongoose"</span>{`
+  ],
+  `}<span style={{ color: 'var(--color-primary)' }}>"integrations"</span>{`: [
+    `}<span style={{ color: 'var(--color-secondary)' }}>"GitHub API"</span>{`,
+    `}<span style={{ color: 'var(--color-secondary)' }}>"Gemini API"</span>{`,
+    `}<span style={{ color: 'var(--color-secondary)' }}>"SMTP"</span>{`
+  ],
+  `}<span style={{ color: 'var(--color-primary)' }}>"deploy"</span>{`: [
+    `}<span style={{ color: 'var(--color-secondary)' }}>"Vercel"</span>{`,
+    `}<span style={{ color: 'var(--color-secondary)' }}>"Render"</span>{`
+  ],
+  `}<span style={{ color: 'var(--color-primary)' }}>"status"</span>{`: `}<span style={{ color: 'var(--color-secondary)' }}>"BUILDING_REAL_PROJECTS"</span>{`,
+  `}<span style={{ color: 'var(--color-primary)' }}>"uptime"</span>{`: `}<span style={{ color: 'var(--color-secondary)' }}>"99.9%"</span>{`
 }`}
           </pre>
         </div>
