@@ -129,7 +129,7 @@ export default function Contact() {
 
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <div style={{ fontFamily: "'Roboto Mono', monospace", fontSize: 10, color: 'var(--color-text-dim)', display: 'flex', gap: 6, alignItems: 'center' }}>
-                <span>🔒</span> ENCRYPTED_LINK_ACTIVE
+                <span></span> ENCRYPTED_LINK_ACTIVE
               </div>
               <button
                 type="submit"

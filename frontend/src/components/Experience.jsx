@@ -1,3 +1,5 @@
+import { useEffect, useState } from 'react';
+
 const experiences = [
   {
     period: '2025-01 -> PRESENT',
@@ -8,7 +10,15 @@ const experiences = [
     stack: ['React', 'Vite', 'Node.js', 'Express', 'MongoDB'],
   },
   {
-    period: '2024-01 -> 2024-12',
+    period: '2024-08 -> PRESENT',
+    level: 'INFO',
+    role: 'CSE Undergraduate Engineer',
+    company: 'NIT Patna',
+    desc: 'Pursuing core CS while building practical products across web and backend systems.',
+    stack: ['DSA', 'OOP', 'DBMS', 'Operating Systems'],
+  },
+  {
+    period: '2024-08 -> 2025-03',
     level: 'INFO',
     role: 'Open Source Contributor',
     company: 'GitHub Community',
@@ -16,20 +26,12 @@ const experiences = [
     stack: ['JavaScript', 'Python', 'Git', 'REST APIs'],
   },
   {
-    period: '2023-01 -> 2023-12',
+    period: '2023-01 -> 2024-07',
     level: 'DEBUG',
-    role: 'Academic Project Developer',
-    company: 'NIT Patna',
-    desc: 'Built project-based applications including utility platforms, dashboards, and problem-specific tools.',
-    stack: ['React', 'TypeScript', 'Tailwind', 'Firebase'],
-  },
-  {
-    period: '2022-01 -> 2022-12',
-    level: 'VERBOSE',
-    role: 'CSE Undergraduate Engineer',
-    company: 'NIT Patna',
-    desc: 'Strengthened CS fundamentals and built strong problem-solving skills through coursework and coding practice.',
-    stack: ['DSA', 'OOP', 'DBMS', 'Operating Systems'],
+    role: 'Independent Project Developer',
+    company: 'Self-Directed Learning',
+    desc: 'Built foundational projects and sharpened development skills before joining NIT Patna.',
+    stack: ['JavaScript', 'React', 'Node.js', 'Problem Solving'],
   },
 ];
 
@@ -40,21 +42,37 @@ const levelColors = {
 };
 
 export default function Experience() {
+  const [isCompact, setIsCompact] = useState(false);
+
+  useEffect(() => {
+    const media = window.matchMedia('(max-width: 768px)');
+    const sync = () => setIsCompact(media.matches);
+    sync();
+
+    if (media.addEventListener) {
+      media.addEventListener('change', sync);
+      return () => media.removeEventListener('change', sync);
+    }
+
+    media.addListener(sync);
+    return () => media.removeListener(sync);
+  }, []);
+
   return (
-    <section id="experience" style={{ padding: '80px 24px', maxWidth: 1200, margin: '0 auto' }}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 40 }}>
+    <section id="experience" style={{ padding: isCompact ? '64px 16px' : '80px 24px', maxWidth: 1200, margin: '0 auto' }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: isCompact ? 28 : 40 }}>
         <span style={{ fontFamily: "'Roboto Mono', monospace", color: 'var(--color-secondary)', fontWeight: 700, fontSize: 18 }}>$</span>
-        <h2 style={{ fontFamily: "'Roboto Mono', monospace", color: 'var(--color-primary)', fontSize: 20, fontWeight: 400, textTransform: 'uppercase', letterSpacing: '0.1em', textShadow: '0 0 15px var(--color-glow)', margin: 0 }}>tail -f experience.log</h2>
+        <h2 style={{ fontFamily: "'Roboto Mono', monospace", color: 'var(--color-primary)', fontSize: isCompact ? 16 : 20, fontWeight: 400, textTransform: 'uppercase', letterSpacing: '0.1em', textShadow: '0 0 15px var(--color-glow)', margin: 0 }}>tail -f experience.log</h2>
       </div>
 
       <div style={{
         background: 'var(--color-card)',
         border: '1px solid var(--color-border)',
-        padding: '28px 28px 12px',
+        padding: isCompact ? '20px 16px 8px' : '28px 28px 12px',
         boxShadow: '0 0 20px var(--color-glow)',
       }}>
         {experiences.map((exp, i) => (
-          <div key={i} style={{ display: 'flex', gap: 16, marginBottom: 28 }}>
+          <div key={i} style={{ display: 'flex', gap: isCompact ? 10 : 16, marginBottom: isCompact ? 20 : 28 }}>
             {/* Timeline line */}
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', flexShrink: 0 }}>
               <div style={{
@@ -72,7 +90,7 @@ export default function Experience() {
             <div style={{ flex: 1, paddingBottom: 12 }}>
               <div style={{
                 fontFamily: "'Roboto Mono', monospace",
-                fontSize: 12,
+                fontSize: isCompact ? 11 : 12,
                 display: 'flex', flexWrap: 'wrap', gap: 8, alignItems: 'center',
                 marginBottom: 8,
               }}>
@@ -88,7 +106,7 @@ export default function Experience() {
               </div>
               <div style={{
                 fontFamily: "'Roboto Mono', monospace",
-                fontSize: 12,
+                fontSize: isCompact ? 11 : 12,
                 color: 'var(--color-text-dim)',
                 borderLeft: '2px solid var(--color-border)',
                 paddingLeft: 12,
