@@ -62,17 +62,17 @@ export default function Hero() {
         <>
           <div style={{
             position: 'absolute', top: '15%', left: '20%',
-            width: 400, height: 400,
-            background: 'radial-gradient(circle, rgba(142,210,255,0.06) 0%, transparent 70%)',
+            width: 430, height: 430,
+            background: 'radial-gradient(circle, rgba(255,255,255,0.7) 0%, rgba(198,225,255,0.22) 44%, transparent 72%)',
             pointerEvents: 'none',
-            filter: 'blur(40px)',
+            filter: 'blur(70px)',
           }} />
           <div style={{
             position: 'absolute', top: '40%', right: '15%',
-            width: 320, height: 320,
-            background: 'radial-gradient(circle, rgba(196,181,253,0.05) 0%, transparent 70%)',
+            width: 360, height: 360,
+            background: 'radial-gradient(circle, rgba(230,222,255,0.5) 0%, rgba(204,223,255,0.2) 48%, transparent 76%)',
             pointerEvents: 'none',
-            filter: 'blur(40px)',
+            filter: 'blur(70px)',
           }} />
         </>
       )}
@@ -86,7 +86,31 @@ export default function Hero() {
         alignItems: 'center',
         position: 'relative',
         zIndex: 1,
+        borderRadius: isLiquidGlass ? 34 : 0,
+        padding: isLiquidGlass ? '26px 18px' : 0,
+        background: isLiquidGlass
+          ? 'linear-gradient(150deg, rgba(255,255,255,0.86) 0%, rgba(236,245,255,0.56) 40%, rgba(224,236,255,0.44) 100%)'
+          : 'transparent',
+        border: isLiquidGlass ? '1px solid rgba(160,186,219,0.5)' : 'none',
+        boxShadow: isLiquidGlass
+          ? '0 30px 62px rgba(92, 123, 165, 0.26), inset 0 1px 0 rgba(255,255,255,0.92), inset 0 -1px 0 rgba(182,205,237,0.56)'
+          : 'none',
+        backdropFilter: isLiquidGlass ? 'blur(38px) saturate(190%)' : 'none',
+        WebkitBackdropFilter: isLiquidGlass ? 'blur(38px) saturate(190%)' : 'none',
       }}>
+        {isLiquidGlass && (
+          <div
+            aria-hidden="true"
+            style={{
+              position: 'absolute',
+              inset: 0,
+              borderRadius: 34,
+              pointerEvents: 'none',
+              background: 'linear-gradient(176deg, rgba(255,255,255,0.88) 0%, rgba(255,255,255,0.38) 20%, rgba(255,255,255,0.08) 42%, rgba(255,255,255,0) 68%)',
+              mixBlendMode: 'screen',
+            }}
+          />
+        )}
 
         {/* ASCII Art */}
         <pre
@@ -146,7 +170,7 @@ export default function Hero() {
           alignItems: 'center',
         }}>
           <a
-            href="#projects"
+            href="#contact"
             style={{
               fontFamily: "'Roboto Mono', monospace",
               background: 'var(--color-primary)',
@@ -175,7 +199,7 @@ export default function Hero() {
               e.currentTarget.style.transform = 'translateY(0)';
             }}
           >
-            VIEW PROJECTS
+            CONTACT ME
           </a>
 
           <a

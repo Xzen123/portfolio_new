@@ -50,14 +50,17 @@ export default function Contact() {
 
   const inputStyle = {
     width: '100%',
-    border: '1px solid var(--color-border)',
-    background: isLiquidGlass ? 'rgba(198, 229, 255, 0.06)' : 'var(--color-surface)',
+    border: `1px solid ${isLiquidGlass ? 'rgba(223, 246, 255, 0.34)' : 'var(--color-border)'}`,
+    background: isLiquidGlass
+      ? 'linear-gradient(155deg, rgba(255, 255, 255, 0.2) 0%, rgba(203, 226, 255, 0.08) 100%)'
+      : 'var(--color-surface)',
     color: 'var(--color-text)',
     fontFamily: "'Roboto Mono', monospace",
     fontSize: 12,
     padding: '11px 12px',
     borderRadius: isLiquidGlass ? 10 : 0,
     outline: 'none',
+    boxShadow: isLiquidGlass ? 'inset 0 1px 0 rgba(255,255,255,0.28)' : 'none',
   };
 
   return (
@@ -89,10 +92,16 @@ export default function Contact() {
       </p>
 
       <div style={{
-        background: isLiquidGlass ? 'rgba(18, 33, 62, 0.62)' : 'var(--color-card)',
-        border: '1px solid var(--color-border)',
+        background: isLiquidGlass
+          ? 'linear-gradient(155deg, rgba(255,255,255,0.2) 0%, rgba(204,226,255,0.09) 40%, rgba(162,188,233,0.08) 100%)'
+          : 'var(--color-card)',
+        border: `1px solid ${isLiquidGlass ? 'rgba(223, 246, 255, 0.36)' : 'var(--color-border)'}`,
         borderRadius: isLiquidGlass ? 16 : 0,
-        boxShadow: isLiquidGlass ? '0 10px 40px rgba(171, 224, 255, 0.16)' : '0 0 24px var(--color-glow)',
+        boxShadow: isLiquidGlass
+          ? '0 20px 44px rgba(2, 12, 30, 0.42), inset 0 1px 0 rgba(255,255,255,0.32), inset 0 -1px 0 rgba(164,188,236,0.24)'
+          : '0 0 24px var(--color-glow)',
+        backdropFilter: isLiquidGlass ? 'blur(26px) saturate(185%)' : 'none',
+        WebkitBackdropFilter: isLiquidGlass ? 'blur(26px) saturate(185%)' : 'none',
         padding: 22,
       }}>
         {status === 'sent' ? (
@@ -152,6 +161,9 @@ export default function Contact() {
                   color: 'var(--color-bg)',
                   border: '1px solid var(--color-primary)',
                   borderRadius: isLiquidGlass ? 10 : 0,
+                  boxShadow: isLiquidGlass
+                    ? '0 10px 24px rgba(3, 12, 28, 0.34), inset 0 1px 0 rgba(255,255,255,0.42)'
+                    : 'none',
                   padding: '10px 18px',
                   fontSize: 11,
                   fontWeight: 700,
@@ -191,7 +203,9 @@ export default function Contact() {
               color: 'var(--color-primary)',
               textDecoration: 'none',
               border: '1px solid var(--color-border)',
-              background: isLiquidGlass ? 'rgba(198, 229, 255, 0.05)' : 'var(--color-card)',
+              background: isLiquidGlass
+                ? 'linear-gradient(155deg, rgba(255,255,255,0.18), rgba(190,216,255,0.08))'
+                : 'var(--color-card)',
               borderRadius: isLiquidGlass ? 999 : 0,
               padding: '7px 11px',
               letterSpacing: '0.06em',

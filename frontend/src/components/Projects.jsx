@@ -127,21 +127,26 @@ function ProjectCard({ project, onClick, isLiquidGlass }) {
       onKeyDown={e => e.key === 'Enter' && onClick()}
       aria-label={`View details for ${project.name}`}
       style={{
-        background: isLiquidGlass ? 'rgba(18,35,65,0.45)' : 'var(--color-card)',
-        backdropFilter: isLiquidGlass ? 'blur(24px) saturate(160%)' : 'none',
-        WebkitBackdropFilter: isLiquidGlass ? 'blur(24px) saturate(160%)' : 'none',
-        border: '1px solid var(--color-border)',
-        borderRadius: isLiquidGlass ? 16 : 0,
+        background: isLiquidGlass
+          ? 'linear-gradient(150deg, rgba(255,255,255,0.18) 0%, rgba(205,227,255,0.1) 36%, rgba(162,188,232,0.07) 100%)'
+          : 'var(--color-card)',
+        backdropFilter: isLiquidGlass ? 'blur(26px) saturate(180%)' : 'none',
+        WebkitBackdropFilter: isLiquidGlass ? 'blur(26px) saturate(180%)' : 'none',
+        border: `1px solid ${isLiquidGlass ? 'rgba(223,246,255,0.34)' : 'var(--color-border)'}`,
+        borderRadius: isLiquidGlass ? 24 : 0,
         transition: 'all 0.3s ease',
         overflow: 'hidden',
         cursor: 'pointer',
         display: 'flex',
         flexDirection: 'column',
+        boxShadow: isLiquidGlass
+          ? '0 24px 46px rgba(92, 120, 160, 0.26), inset 0 1px 0 rgba(255,255,255,0.88), inset 0 -1px 0 rgba(186,209,239,0.56)'
+          : 'none',
       }}
       onMouseEnter={e => {
         e.currentTarget.style.borderColor = 'var(--color-primary)';
         e.currentTarget.style.boxShadow = isLiquidGlass
-          ? '0 8px 40px rgba(142,210,255,0.2), 0 0 0 1px rgba(168,216,255,0.15)'
+          ? '0 30px 56px rgba(96, 125, 166, 0.28), 0 0 0 1px rgba(229,247,255,0.5), inset 0 1px 0 rgba(255,255,255,0.94)'
           : '0 0 30px var(--color-glow)';
         e.currentTarget.style.transform = 'translateY(-5px)';
       }}
@@ -155,8 +160,10 @@ function ProjectCard({ project, onClick, isLiquidGlass }) {
       <div style={{
         display: 'flex', justifyContent: 'space-between', alignItems: 'center',
         padding: '8px 14px',
-        background: isLiquidGlass ? 'rgba(168,216,255,0.06)' : 'var(--color-surface)',
-        borderBottom: '1px solid var(--color-border)',
+        background: isLiquidGlass
+          ? 'linear-gradient(180deg, rgba(255,255,255,0.88) 0%, rgba(234,244,255,0.54) 100%)'
+          : 'var(--color-surface)',
+        borderBottom: `1px solid ${isLiquidGlass ? 'rgba(224,245,255,0.34)' : 'var(--color-border)'}`,
       }}>
         <span style={{
           fontFamily: "'Roboto Mono', monospace",
@@ -209,13 +216,13 @@ function ProjectCard({ project, onClick, isLiquidGlass }) {
           position: 'absolute', top: 8, right: 8,
           fontFamily: "'Roboto Mono', monospace", fontSize: 9,
           color: 'var(--color-primary)',
-          background: isLiquidGlass ? 'rgba(6,12,24,0.7)' : 'var(--color-card)',
-          border: '1px solid var(--color-primary)',
+          background: isLiquidGlass ? 'rgba(255,255,255,0.82)' : 'var(--color-card)',
+          border: `1px solid ${isLiquidGlass ? 'rgba(224,245,255,0.45)' : 'var(--color-primary)'}`,
           padding: '2px 7px',
           letterSpacing: '0.1em',
           borderRadius: isLiquidGlass ? 4 : 0,
           opacity: 0.9,
-          backdropFilter: isLiquidGlass ? 'blur(8px)' : 'none',
+          backdropFilter: isLiquidGlass ? 'blur(16px) saturate(185%)' : 'none',
         }}>
           ↗ EXPAND
         </div>
@@ -242,7 +249,9 @@ function ProjectCard({ project, onClick, isLiquidGlass }) {
               fontSize: 9,
               color: 'var(--color-primary)',
               border: '1px solid var(--color-border)',
-              background: isLiquidGlass ? 'rgba(168,216,255,0.06)' : 'var(--color-surface)',
+              background: isLiquidGlass
+                ? 'linear-gradient(155deg, rgba(255,255,255,0.8), rgba(229,241,255,0.48))'
+                : 'var(--color-surface)',
               padding: '2px 7px',
               borderRadius: isLiquidGlass ? 4 : 0,
             }}>

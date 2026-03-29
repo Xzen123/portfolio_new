@@ -75,8 +75,8 @@ export default function Navbar() {
   const headerBg = () => {
     if (isLiquidGlass) {
       return scrolled
-        ? 'rgba(6, 12, 24, 0.72)'
-        : 'rgba(6, 12, 24, 0.45)';
+        ? 'linear-gradient(180deg, rgba(255, 255, 255, 0.8) 0%, rgba(242, 248, 255, 0.62) 100%)'
+        : 'linear-gradient(180deg, rgba(255, 255, 255, 0.66) 0%, rgba(243, 248, 255, 0.44) 100%)';
     }
     if (scrolled) return 'color-mix(in srgb, var(--color-surface) 96%, transparent)';
     return isMinimal ? 'var(--color-surface)' : 'rgba(0,0,0,0.6)';
@@ -87,12 +87,18 @@ export default function Navbar() {
     fontSize: 10,
     letterSpacing: '0.07em',
     color: active ? 'var(--color-bg)' : 'var(--color-primary)',
-    border: '1px solid var(--color-border)',
-    background: active ? 'var(--color-primary)' : 'transparent',
+    border: `1px solid ${isLiquidGlass ? 'rgba(218, 240, 255, 0.42)' : 'var(--color-border)'}`,
+    background: active
+      ? 'linear-gradient(180deg, rgba(231, 246, 255, 0.94) 0%, rgba(203, 228, 255, 0.86) 100%)'
+      : (isLiquidGlass
+        ? 'linear-gradient(160deg, rgba(255, 255, 255, 0.16) 0%, rgba(196, 223, 255, 0.06) 100%)'
+        : 'transparent'),
     padding: '5px 10px',
     cursor: 'pointer',
     transition: 'all 0.2s ease',
-    boxShadow: active ? '0 0 10px var(--color-glow)' : 'none',
+    boxShadow: active
+      ? '0 12px 26px rgba(3, 14, 35, 0.34), inset 0 1px 0 rgba(255, 255, 255, 0.42)'
+      : (isLiquidGlass ? 'inset 0 1px 0 rgba(255,255,255,0.2)' : 'none'),
     borderRadius: isLiquidGlass ? 8 : 0,
     whiteSpace: 'nowrap',
   });
@@ -104,27 +110,48 @@ export default function Navbar() {
     }
   };
 
+  const desktopDotStyle = (color) => ({
+    width: 13,
+    height: 13,
+    borderRadius: '50%',
+    border: '1px solid rgba(0,0,0,0.16)',
+    background: color,
+    display: 'inline-block',
+    cursor: 'pointer',
+    padding: 0,
+    boxShadow: isLiquidGlass
+      ? '0 2px 6px rgba(0,0,0,0.24), inset 0 1px 0 rgba(255,255,255,0.4)'
+      : 'none',
+    transition: 'transform 0.15s ease, filter 0.15s ease',
+  });
+
   /* ── Settings Panel ── */
   const renderSettingsPanel = () => (
     <div
       data-navbar-settings
       style={{
         width: '100%',
-        border: settingsOpen ? '1px solid var(--color-primary)' : '1px solid transparent',
+        border: settingsOpen
+          ? `1px solid ${isLiquidGlass ? 'rgba(224, 246, 255, 0.58)' : 'var(--color-primary)'}`
+          : '1px solid transparent',
         background: isLiquidGlass
-          ? 'rgba(6, 12, 24, 0.75)'
+          ? 'linear-gradient(155deg, rgba(255, 255, 255, 0.86) 0%, rgba(239, 246, 255, 0.56) 35%, rgba(227, 238, 255, 0.42) 100%)'
           : 'color-mix(in srgb, var(--color-card) 94%, transparent)',
-        backdropFilter: isLiquidGlass ? 'blur(28px) saturate(180%)' : 'none',
-        WebkitBackdropFilter: isLiquidGlass ? 'blur(28px) saturate(180%)' : 'none',
+        backdropFilter: isLiquidGlass ? 'blur(36px) saturate(195%)' : 'none',
+        WebkitBackdropFilter: isLiquidGlass ? 'blur(36px) saturate(195%)' : 'none',
         padding: settingsOpen ? '10px 12px' : 0,
-        boxShadow: settingsOpen ? '0 8px 32px var(--color-glow)' : 'none',
+        boxShadow: settingsOpen
+          ? (isLiquidGlass
+            ? '0 26px 54px rgba(92, 121, 160, 0.28), inset 0 1px 0 rgba(255, 255, 255, 0.78), inset 0 -1px 0 rgba(184, 208, 239, 0.5)'
+            : '0 8px 32px var(--color-glow)')
+          : 'none',
         maxHeight: settingsOpen ? 240 : 0,
         opacity: settingsOpen ? 1 : 0,
         transform: settingsOpen ? 'translateY(0)' : 'translateY(-8px)',
         overflow: 'hidden',
         pointerEvents: settingsOpen ? 'auto' : 'none',
         transition: 'max-height 0.34s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.22s ease, transform 0.3s cubic-bezier(0.22, 1, 0.36, 1), padding 0.24s ease, box-shadow 0.24s ease',
-        borderRadius: isLiquidGlass ? '0 0 12px 12px' : 0,
+        borderRadius: isLiquidGlass ? '0 0 22px 22px' : 0,
       }}
     >
       <div style={{ marginBottom: 6, fontFamily: "'Roboto Mono', monospace", fontSize: 9, letterSpacing: '0.12em', color: 'var(--color-text-dim)' }}>
@@ -253,10 +280,14 @@ export default function Navbar() {
       style={{
         position: 'fixed', top: 0, left: 0, right: 0, zIndex: 100,
         background: headerBg(),
-        backdropFilter: (scrolled || isLiquidGlass) ? 'blur(20px) saturate(160%)' : 'none',
-        WebkitBackdropFilter: (scrolled || isLiquidGlass) ? 'blur(20px) saturate(160%)' : 'none',
-        borderBottom: `1px solid ${isLiquidGlass ? 'rgba(168,216,255,0.12)' : 'var(--color-border)'}`,
-        boxShadow: scrolled && !isMinimal ? '0 4px 30px var(--color-glow)' : 'none',
+        backdropFilter: (scrolled || isLiquidGlass) ? 'blur(34px) saturate(190%)' : 'none',
+        WebkitBackdropFilter: (scrolled || isLiquidGlass) ? 'blur(34px) saturate(190%)' : 'none',
+        borderBottom: `1px solid ${isLiquidGlass ? 'rgba(168,190,221,0.38)' : 'var(--color-border)'}`,
+        boxShadow: scrolled && !isMinimal
+          ? (isLiquidGlass
+            ? '0 20px 44px rgba(95, 126, 168, 0.26), inset 0 1px 0 rgba(255,255,255,0.74)'
+            : '0 4px 30px var(--color-glow)')
+          : 'none',
         transition: 'background 0.35s ease, box-shadow 0.35s ease, border-color 0.35s ease, backdrop-filter 0.35s ease',
       }}
     >
@@ -279,17 +310,38 @@ export default function Navbar() {
           {/* LEFT: empty spacing anchor */}
           <div style={{ display: 'flex', alignItems: 'center', gap: 8, justifyContent: 'flex-start' }}>
             {!isCompact && (
-              <span
-                style={{
-                  fontFamily: "'Roboto Mono', monospace",
-                  fontSize: 10,
-                  color: 'var(--color-text-dim)',
-                  letterSpacing: '0.12em',
-                  textTransform: 'uppercase',
-                }}
-              >
-                Studio Mode
-              </span>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                <button
+                  type="button"
+                  onClick={minimize}
+                  aria-label="Minimize window"
+                  title="Minimize"
+                  style={desktopDotStyle('#ff5f57')}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.transform = 'scale(1.12)';
+                    e.currentTarget.style.filter = 'brightness(1.08)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.transform = 'scale(1)';
+                    e.currentTarget.style.filter = 'brightness(1)';
+                  }}
+                />
+                <button
+                  type="button"
+                  onClick={toggleFullscreen}
+                  aria-label={isFullscreen ? 'Exit fullscreen' : 'Enter fullscreen'}
+                  title={isFullscreen ? 'Exit Fullscreen' : 'Enter Fullscreen'}
+                  style={desktopDotStyle('#28c840')}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.transform = 'scale(1.12)';
+                    e.currentTarget.style.filter = 'brightness(1.08)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.transform = 'scale(1)';
+                    e.currentTarget.style.filter = 'brightness(1)';
+                  }}
+                />
+              </div>
             )}
           </div>
 
@@ -335,8 +387,10 @@ export default function Navbar() {
                     cursor: 'pointer',
                     padding: '4px 7px',
                     transition: 'border-color 0.25s ease, box-shadow 0.25s ease',
-                    boxShadow: menuOpen ? '0 0 12px var(--color-glow)' : 'none',
-                    borderRadius: isLiquidGlass ? 6 : 0,
+                    boxShadow: menuOpen
+                      ? (isLiquidGlass ? '0 12px 24px rgba(0, 12, 32, 0.34), inset 0 1px 0 rgba(255,255,255,0.32)' : '0 0 12px var(--color-glow)')
+                      : (isLiquidGlass ? 'inset 0 1px 0 rgba(255,255,255,0.2)' : 'none'),
+                    borderRadius: isLiquidGlass ? 12 : 0,
                   }}
                 >
                   {[0, 1, 2].map((bar) => (
@@ -370,12 +424,16 @@ export default function Navbar() {
                     letterSpacing: '0.08em',
                     color: settingsOpen ? 'var(--color-bg)' : 'var(--color-primary)',
                     border: '1px solid var(--color-primary)',
-                    background: settingsOpen ? 'var(--color-primary)' : 'transparent',
-                    boxShadow: settingsOpen ? '0 0 12px var(--color-glow)' : 'none',
+                    background: settingsOpen
+                      ? (isLiquidGlass ? 'linear-gradient(180deg, rgba(228,246,255,0.94), rgba(198,225,255,0.84))' : 'var(--color-primary)')
+                      : (isLiquidGlass ? 'linear-gradient(160deg, rgba(255,255,255,0.16), rgba(198,223,255,0.08))' : 'transparent'),
+                    boxShadow: settingsOpen
+                      ? (isLiquidGlass ? '0 12px 24px rgba(0, 14, 35, 0.38), inset 0 1px 0 rgba(255,255,255,0.4)' : '0 0 12px var(--color-glow)')
+                      : (isLiquidGlass ? 'inset 0 1px 0 rgba(255,255,255,0.2)' : 'none'),
                     padding: '4px 8px',
                     cursor: 'pointer',
                     transition: 'all 0.25s ease',
-                    borderRadius: isLiquidGlass ? 6 : 0,
+                    borderRadius: isLiquidGlass ? 12 : 0,
                   }}
                 >
                   ⚙ SET
@@ -400,7 +458,7 @@ export default function Navbar() {
                         border: '1px solid transparent',
                         transition: 'all 0.2s ease',
                         whiteSpace: 'nowrap',
-                        borderRadius: isLiquidGlass ? 6 : 0,
+                        borderRadius: isLiquidGlass ? 12 : 0,
                       }}
                       onMouseEnter={e => {
                         e.target.style.borderColor = 'var(--color-primary)';
@@ -429,12 +487,12 @@ export default function Navbar() {
                     letterSpacing: '0.08em',
                     color: settingsOpen ? 'var(--color-bg)' : 'var(--color-primary)',
                     border: `1px solid ${settingsOpen ? 'var(--color-primary)' : 'var(--color-border)'}`,
-                    background: settingsOpen ? 'var(--color-primary)' : (isLiquidGlass ? 'rgba(168,216,255,0.08)' : 'var(--color-card)'),
+                    background: settingsOpen ? 'var(--color-primary)' : (isLiquidGlass ? 'rgba(255,255,255,0.56)' : 'var(--color-card)'),
                     padding: '5px 8px',
                     cursor: 'pointer',
                     transition: 'all 0.25s ease',
                     boxShadow: settingsOpen ? '0 0 10px var(--color-glow)' : 'none',
-                    borderRadius: isLiquidGlass ? 6 : 0,
+                    borderRadius: isLiquidGlass ? 12 : 0,
                   }}
                 >
                   ⚙ SET
@@ -457,16 +515,19 @@ export default function Navbar() {
               width: '100%',
               border: menuOpen ? '1px solid var(--color-border)' : '1px solid transparent',
               background: isLiquidGlass
-                ? 'rgba(6,12,24,0.82)'
+                ? 'linear-gradient(155deg, rgba(255,255,255,0.18) 0%, rgba(201,226,255,0.09) 46%, rgba(160,184,235,0.08) 100%)'
                 : 'var(--color-card)',
-              backdropFilter: isLiquidGlass ? 'blur(24px)' : 'none',
+              backdropFilter: isLiquidGlass ? 'blur(34px) saturate(190%)' : 'none',
+              boxShadow: menuOpen && isLiquidGlass
+                ? '0 16px 36px rgba(2, 14, 32, 0.4), inset 0 1px 0 rgba(255,255,255,0.26)'
+                : 'none',
               maxHeight: menuOpen ? 280 : 0,
               opacity: menuOpen ? 1 : 0,
               transform: menuOpen ? 'translateY(0)' : 'translateY(-6px)',
               overflow: 'hidden',
               pointerEvents: menuOpen ? 'auto' : 'none',
               transition: 'max-height 0.32s cubic-bezier(0.22,1,0.36,1), opacity 0.22s ease, transform 0.28s cubic-bezier(0.22,1,0.36,1)',
-              borderRadius: isLiquidGlass ? '0 0 12px 12px' : 0,
+              borderRadius: isLiquidGlass ? '0 0 22px 22px' : 0,
               marginTop: 4,
             }}
           >

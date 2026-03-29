@@ -43,11 +43,14 @@ export default function Footer() {
         padding: collapsed ? '4px 14px' : (isCompact ? '8px 14px 10px' : '6px 24px 8px'),
         gap: collapsed ? 0 : (isCompact ? 7 : 0),
         background: isLiquidGlass
-          ? 'rgba(6,12,24,0.7)'
+          ? 'linear-gradient(170deg, rgba(255,255,255,0.18) 0%, rgba(202,226,255,0.08) 45%, rgba(160,184,233,0.08) 100%)'
           : 'color-mix(in srgb, var(--color-surface) 95%, transparent)',
-        backdropFilter: 'blur(16px) saturate(150%)',
-        WebkitBackdropFilter: 'blur(16px) saturate(150%)',
-        borderTop: `1px solid ${isLiquidGlass ? 'rgba(168,216,255,0.1)' : 'var(--color-border)'}`,
+        backdropFilter: isLiquidGlass ? 'blur(24px) saturate(180%)' : 'blur(16px) saturate(150%)',
+        WebkitBackdropFilter: isLiquidGlass ? 'blur(24px) saturate(180%)' : 'blur(16px) saturate(150%)',
+        borderTop: `1px solid ${isLiquidGlass ? 'rgba(224,245,255,0.34)' : 'var(--color-border)'}`,
+        boxShadow: isLiquidGlass
+          ? '0 -18px 42px rgba(2, 10, 28, 0.4), inset 0 1px 0 rgba(255,255,255,0.28)'
+          : 'none',
         zIndex: 90,
         fontFamily: "'Roboto Mono', monospace",
         fontSize: isCompact ? 9 : 10,
@@ -88,10 +91,14 @@ export default function Footer() {
           letterSpacing: '0.08em',
           color: collapsed ? 'var(--color-bg)' : 'var(--color-primary)',
           border: '1px solid var(--color-primary)',
-          background: collapsed ? 'var(--color-primary)' : 'transparent',
+          background: collapsed
+            ? (isLiquidGlass ? 'linear-gradient(180deg, rgba(230,246,255,0.94), rgba(197,223,255,0.86))' : 'var(--color-primary)')
+            : (isLiquidGlass ? 'linear-gradient(155deg, rgba(255,255,255,0.18), rgba(196,223,255,0.08))' : 'transparent'),
           padding: '3px 8px',
           cursor: 'pointer',
-          boxShadow: collapsed ? '0 0 8px var(--color-glow)' : 'none',
+          boxShadow: collapsed
+            ? (isLiquidGlass ? '0 12px 26px rgba(2, 10, 28, 0.36), inset 0 1px 0 rgba(255,255,255,0.42)' : '0 0 8px var(--color-glow)')
+            : (isLiquidGlass ? 'inset 0 1px 0 rgba(255,255,255,0.2)' : 'none'),
           transition: 'all 0.25s ease',
           borderRadius: isLiquidGlass ? 4 : 0,
           flexShrink: 0,
