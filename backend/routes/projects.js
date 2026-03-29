@@ -4,14 +4,90 @@ const https = require('https');
 const router = express.Router();
 
 const GITHUB_API_BASE = 'https://api.github.com';
-const GEMINI_MODEL = 'gemini-1.5-flash';
+const GEMINI_MODEL = 'gemini-2.0-flash';
 const GEMINI_API_BASE = 'https://generativelanguage.googleapis.com/v1beta/models';
 
 const aiCache = new Map();
 const contributorCountCache = new Map();
 const CONTRIBUTOR_CACHE_TTL_MS = 15 * 60 * 1000;
 
+const PRIORITY_REPO_ORDER = [
+  'portfolio_new',
+  'citscinet_ssfc',
+  'nextjs-boilerplate',
+  'campuspath',
+];
+
+const PROJECT_LIMIT = 7;
+
+const PINNED_PROJECT_DETAILS = {
+  portfolio_new: {
+    name: 'PORTFOLIO NEW.EXE',
+    desc: 'Personal portfolio platform with dynamic project sync and API-backed contact flow.',
+    fullDesc: 'A full portfolio system that integrates frontend UX with backend APIs for projects, contact automation, and theme persistence. Built to stay resilient with live/fallback data modes.',
+    img: 'https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=800&auto=format&fit=crop&q=60',
+  },
+  citscinet_ssfc: {
+    name: 'CITSCINET SSFC.EXE',
+    desc: 'Citizen science collaboration platform connecting researchers and volunteers.',
+    fullDesc: 'A social and workflow-driven platform for citizen science initiatives where participants can join projects, submit data, and collaborate with researchers.',
+    img: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=800&auto=format&fit=crop&q=60',
+  },
+  'nextjs-boilerplate': {
+    name: 'SUSTAIN BITE.EXE',
+    desc: 'Production-ready Next.js starter tailored for fast shipping and clean architecture.',
+    fullDesc: 'A reusable Next.js baseline designed for rapid project setup, maintainable structure, and scalable frontend development workflows.',
+    img: 'https://images.unsplash.com/photo-1518770660439-4636190af475?w=800&auto=format&fit=crop&q=60',
+  },
+  campuspath: {
+    name: 'CAMPUSPATH.EXE',
+    desc: 'Campus navigation and pathfinding utility built for practical student use.',
+    fullDesc: 'A route-guidance utility that helps students navigate campus locations using shortest-path logic and structured destination data.',
+    img: 'https://images.unsplash.com/photo-1562774053-701939374585?w=800&auto=format&fit=crop&q=60',
+  },
+};
+
 const RATE_LIMIT_FALLBACK_PROJECTS = [
+  {
+    name: 'PORTFOLIO NEW.EXE',
+    desc: 'Personal portfolio web app with dynamic projects and contact workflow.',
+    fullDesc: 'Fallback project data used during API limits. This repository hosts your main portfolio application with frontend and backend integration.',
+    features: ['Dynamic project section', 'Theme persistence', 'Contact workflow', 'Production deployment'],
+    stack: ['React', 'Node.js', 'Express', 'MongoDB'],
+    demo: 'https://github.com/Xzen123/portfolio_new',
+    repo: 'https://github.com/Xzen123/portfolio_new',
+    img: 'https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=800&auto=format&fit=crop&q=60',
+  },
+  {
+    name: 'CITSCINET SSFC.EXE',
+    desc: 'Citizen science collaboration platform connecting researchers and volunteers.',
+    fullDesc: 'Fallback project data used when live API data is unavailable. This project supports participatory data collection and collaboration workflows.',
+    features: ['Project enrollment flows', 'Data submission workflow', 'Community interaction', 'Role-based access'],
+    stack: ['JavaScript', 'Node.js', 'Express', 'MongoDB'],
+    demo: 'https://github.com/Xzen123/CitSciNet_SSFC',
+    repo: 'https://github.com/Xzen123/CitSciNet_SSFC',
+    img: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=800&auto=format&fit=crop&q=60',
+  },
+  {
+    name: 'SUSTAIN BITE.EXE',
+    desc: 'Starter template for quickly bootstrapping modern Next.js applications.',
+    fullDesc: 'Fallback project data used during service degradation. This repository provides a reusable baseline for scalable Next.js projects.',
+    features: ['Production-ready scaffolding', 'Reusable structure', 'Fast bootstrap workflow', 'Clean starter configuration'],
+    stack: ['Next.js', 'React', 'TypeScript', 'Node.js'],
+    demo: 'https://github.com/Xzen123/nextjs-boilerplate',
+    repo: 'https://github.com/Xzen123/nextjs-boilerplate',
+    img: 'https://images.unsplash.com/photo-1518770660439-4636190af475?w=800&auto=format&fit=crop&q=60',
+  },
+  {
+    name: 'CAMPUSPATH.EXE',
+    desc: 'Campus navigation and shortest-path utility for NIT Patna.',
+    fullDesc: 'Fallback project data shown when live generation is unavailable. CampusPath helps students navigate destinations using efficient pathfinding logic.',
+    features: ['Shortest-path navigation', 'Campus destination mapping', 'Route guidance flow', 'Student-focused utility'],
+    stack: ['TypeScript', 'React', 'Algorithms'],
+    demo: 'https://github.com/Xzen123/CampusPath',
+    repo: 'https://github.com/Xzen123/CampusPath',
+    img: 'https://images.unsplash.com/photo-1562774053-701939374585?w=800&auto=format&fit=crop&q=60',
+  },
   {
     name: 'BUNK CALCULATOR.EXE',
     desc: 'Attendance planner utility for safe leave and recovery calculations.',
@@ -33,16 +109,31 @@ const RATE_LIMIT_FALLBACK_PROJECTS = [
     img: 'https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=800&auto=format&fit=crop&q=60',
   },
   {
-    name: 'NITP CSE 1ST SEM.EXE',
-    desc: 'Open study resources repository for CSE students.',
-    fullDesc: 'Fallback project data used during GitHub API limits. Includes notes, PYQs, and syllabus materials for students.',
-    features: ['Notes repository', 'PYQ collection', 'Syllabus resources', 'Open contributions'],
-    stack: ['Markdown', 'PDF', 'Open Source'],
-    demo: 'https://github.com/Xzen123/NITP-CSE-1ST-SEM',
-    repo: 'https://github.com/Xzen123/NITP-CSE-1ST-SEM',
-    img: 'https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=800&auto=format&fit=crop&q=60',
+    name: 'PDF SCRAPPER V01.EXE',
+    desc: 'PDF extraction utility for structured academic and technical documents.',
+    fullDesc: 'Fallback project data used during API limits. This project extracts readable structured outputs from complex PDF sources.',
+    features: ['PDF content extraction', 'Structured output generation', 'Academic document support', 'Automation-friendly workflow'],
+    stack: ['Python', 'PyMuPDF', 'pandas'],
+    demo: 'https://github.com/Xzen123/pdf_scrapper_v01',
+    repo: 'https://github.com/Xzen123/pdf_scrapper_v01',
+    img: 'https://images.unsplash.com/photo-1568209865332-a15790aed756?w=800&auto=format&fit=crop&q=60',
+  },
+  {
+    name: 'LABFILES SEM4.EXE',
+    desc: 'Lab and coursework repository for semester project and practical files.',
+    fullDesc: 'Fallback project data used during API limits. This repository organizes semester lab work for quick reference and reuse.',
+    features: ['Organized lab files', 'Semester workflow support', 'Academic project tracking', 'Reference-friendly structure'],
+    stack: ['Jupyter Notebook', 'Python', 'Coursework'],
+    demo: 'https://github.com/Xzen123/labfiles_sem4',
+    repo: 'https://github.com/Xzen123/labfiles_sem4',
+    img: 'https://images.unsplash.com/photo-1484417894907-623942c8ee29?w=800&auto=format&fit=crop&q=60',
   },
 ];
+
+function isExcludedRepo(repoName) {
+  const value = String(repoName || '').toLowerCase();
+  return /nitp.*cse.*sem|nit-p.*cse.*sem|nitp-cse|nitp_cse/.test(value);
+}
 
 function httpsRequest(url, options = {}, body = null) {
   return new Promise((resolve, reject) => {
@@ -163,6 +254,22 @@ function fallbackProject(repo) {
   };
 }
 
+function applyPinnedProjectDetails(repoName, project) {
+  const key = String(repoName || '').toLowerCase();
+  const pinned = PINNED_PROJECT_DETAILS[key];
+  if (!pinned) {
+    return project;
+  }
+
+  return {
+    ...project,
+    name: pinned.name || project.name,
+    desc: pinned.desc || project.desc,
+    fullDesc: pinned.fullDesc || project.fullDesc,
+    img: pinned.img || project.img,
+  };
+}
+
 function parseGeminiJson(text) {
   const fenced = text.match(/```json\s*([\s\S]*?)\s*```/i);
   const candidate = fenced ? fenced[1] : text;
@@ -244,7 +351,7 @@ router.get('/status', async (_req, res) => {
 async function generateProjectWithGemini(repo) {
   const apiKey = process.env.GEMINI_API_KEY;
   if (!apiKey) {
-    return fallbackProject(repo);
+    return applyPinnedProjectDetails(repo.name, fallbackProject(repo));
   }
 
   const cacheKey = `${repo.full_name}:${repo.updated_at}`;
@@ -302,13 +409,13 @@ async function generateProjectWithGemini(repo) {
   );
 
   if (status !== 200) {
-    return fallbackProject(repo);
+    return applyPinnedProjectDetails(repo.name, fallbackProject(repo));
   }
 
   const parsed = JSON.parse(data);
   const text = parsed?.candidates?.[0]?.content?.parts?.[0]?.text;
   if (!text) {
-    return fallbackProject(repo);
+    return applyPinnedProjectDetails(repo.name, fallbackProject(repo));
   }
 
   try {
@@ -328,10 +435,11 @@ async function generateProjectWithGemini(repo) {
       img: `https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=800&auto=format&fit=crop&q=60&sig=${repo.id}`,
     };
 
-    aiCache.set(cacheKey, normalized);
-    return normalized;
+    const finalProject = applyPinnedProjectDetails(repo.name, normalized);
+    aiCache.set(cacheKey, finalProject);
+    return finalProject;
   } catch {
-    return fallbackProject(repo);
+    return applyPinnedProjectDetails(repo.name, fallbackProject(repo));
   }
 }
 
@@ -340,8 +448,15 @@ router.get('/', async (req, res) => {
 
   try {
     const repos = await getGithubRepos(username);
-    const ownRepos = repos.filter((repo) => !repo.fork);
+    const ownRepos = repos.filter((repo) => !repo.fork && !isExcludedRepo(repo.name));
+    const priorityRepos = PRIORITY_REPO_ORDER
+      .map((name) => ownRepos.find((repo) => repo.name.toLowerCase() === name))
+      .filter(Boolean);
+
+    const prioritySet = new Set(priorityRepos.map((repo) => repo.name.toLowerCase()));
+
     const candidateRepos = ownRepos
+      .filter((repo) => !prioritySet.has(repo.name.toLowerCase()))
       .sort((a, b) => Number(b.size || 0) - Number(a.size || 0))
       .slice(0, 25);
 
@@ -358,10 +473,12 @@ router.get('/', async (req, res) => {
       })
     );
 
-    const selectedRepos = rankedRepos
+    const rankedSelected = rankedRepos
       .sort((a, b) => b.rankingScore - a.rankingScore)
-      .slice(0, 6)
+      .slice(0, Math.max(0, PROJECT_LIMIT - priorityRepos.length))
       .map((item) => item.repo);
+
+    const selectedRepos = [...priorityRepos, ...rankedSelected].slice(0, PROJECT_LIMIT);
 
     const projects = await Promise.all(selectedRepos.map((repo) => generateProjectWithGemini(repo)));
 
