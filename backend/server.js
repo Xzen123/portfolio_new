@@ -10,9 +10,31 @@ const contactRoutes = require('./routes/contact');
 const app = express();
 const PORT = process.env.PORT || 5000;
 
+const allowedOrigins = [
+  'http://xzen-alok.tech',
+  'https://xzen-alok.tech',
+  'http://localhost:5173',
+  'http://127.0.0.1:5173',
+  'https://portfolio-new-taupe-five.vercel.app',
+];
+
 // Middleware
 app.use(cors({
-  origin: ['http://xzen-alok.tech', 'http://localhost:5173', 'http://127.0.0.1:5173'],
+  origin: (origin, callback) => {
+    if (!origin) {
+      return callback(null, true);
+    }
+
+    const isAllowed =
+      allowedOrigins.includes(origin) ||
+      origin.endsWith('.vercel.app');
+
+    if (isAllowed) {
+      return callback(null, true);
+    }
+
+    return callback(new Error('Not allowed by CORS'));
+  },
 }));
 app.use(express.json());
 

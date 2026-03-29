@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
 import ProjectModal from './ProjectModal';
+import { API_ENDPOINTS } from '../config/api';
 
-const PROJECTS_API_URL = 'http://localhost:5000/api/projects?username=Xzen123';
+const PROJECTS_API_URL = API_ENDPOINTS.projects;
 
 const FALLBACK_PROJECTS = [
   {

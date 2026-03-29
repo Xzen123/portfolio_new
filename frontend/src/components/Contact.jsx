@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { API_ENDPOINTS } from '../config/api';
 
 const CONTACT_LINKS = {
   github: 'https://github.com/Xzen123',
@@ -8,7 +9,7 @@ const CONTACT_LINKS = {
   whatsapp: 'https://wa.me/919508397337',
 };
 
-const CONTACT_API_URL = 'http://localhost:5000/api/contact';
+const CONTACT_API_URL = API_ENDPOINTS.contact;
 
 export default function Contact() {
   const [form, setForm] = useState({ name: '', email: '', message: '' });

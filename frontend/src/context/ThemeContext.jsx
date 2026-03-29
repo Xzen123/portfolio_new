@@ -1,9 +1,10 @@
 import { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { themes, defaultTheme } from '../themes/themes';
+import { API_ENDPOINTS } from '../config/api';
 
 const ThemeContext = createContext(null);
 
-const API_URL = 'http://localhost:5000/api/theme';
+const API_URL = API_ENDPOINTS.theme;
 const LS_KEY = 'portfolio-theme';
 
 function applyTheme(theme) {

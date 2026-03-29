@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
+import { API_ENDPOINTS } from '../config/api';
 
-const STATUS_API_URL = 'http://localhost:5000/api/projects/status';
+const STATUS_API_URL = API_ENDPOINTS.projectsStatus;
 
 export default function Footer() {
   const [apiStatus, setApiStatus] = useState({
