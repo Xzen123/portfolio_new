@@ -2,7 +2,6 @@ import { useState, useEffect, useRef } from 'react';
 import { ThemeProvider } from './context/ThemeContext';
 import { WindowProvider, useWindow } from './context/WindowContext';
 import CRTOverlay from './components/CRTOverlay';
-import ThemeSwitcher from './components/ThemeSwitcher';
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
 import About from './components/About';
@@ -25,18 +24,15 @@ function AppInner() {
     const media = window.matchMedia('(max-width: 980px)');
     const sync = () => setIsCompact(media.matches);
     sync();
-
     if (media.addEventListener) {
       media.addEventListener('change', sync);
       return () => media.removeEventListener('change', sync);
     }
-
     media.addListener(sync);
     return () => media.removeListener(sync);
   }, []);
 
   useEffect(() => {
-    // Play restore animation when transitioning from minimized → visible
     if (prevMinimizedRef.current && !isMinimized) {
       setAnimClass('portfolio-restore');
       const t = setTimeout(() => setAnimClass(''), 700);
@@ -53,9 +49,11 @@ function AppInner() {
   return (
     <div className={animClass}>
       <CRTOverlay />
-      <ThemeSwitcher />
       <Navbar />
-      <main style={{ paddingTop: isCompact ? 108 : 56, paddingBottom: isCompact ? 112 : 64 }}>
+      <main
+        id="main-content"
+        style={{ paddingTop: isCompact ? 102 : 56, paddingBottom: isCompact ? 100 : 64 }}
+      >
         <Hero />
         <About />
         <Skills />
@@ -70,7 +68,6 @@ function AppInner() {
 
 export default function App() {
   const [loading, setLoading] = useState(() => {
-    // Only show loading once per session
     return sessionStorage.getItem('portfolio-loaded') !== 'true';
   });
 

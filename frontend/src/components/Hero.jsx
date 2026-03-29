@@ -26,6 +26,7 @@ export default function Hero() {
   const [deleting, setDeleting] = useState(false);
   const { currentTheme } = useTheme();
   const isMinimal = currentTheme?.minimal;
+  const isLiquidGlass = currentTheme?.name === 'liquidglass';
 
   useEffect(() => {
     const phrase = TYPING_PHRASES[phraseIdx];
@@ -38,7 +39,7 @@ export default function Hero() {
       timeout = setTimeout(() => setDisplayed(displayed.slice(0, -1)), 40);
     } else if (deleting && displayed.length === 0) {
       setDeleting(false);
-      setPhraseIdx((i) => (i + 1) % TYPING_PHRASES.length);
+      setPhraseIdx(i => (i + 1) % TYPING_PHRASES.length);
     }
     return () => clearTimeout(timeout);
   }, [displayed, deleting, phraseIdx]);
@@ -46,15 +47,36 @@ export default function Hero() {
   return (
     <section
       id="hero"
+      aria-label="Introduction"
       style={{
         minHeight: '100vh',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
         padding: '80px 24px 40px',
+        position: 'relative',
       }}
     >
-      {/* Centered inner container */}
+      {/* Liquid glass ambient glow */}
+      {isLiquidGlass && (
+        <>
+          <div style={{
+            position: 'absolute', top: '15%', left: '20%',
+            width: 400, height: 400,
+            background: 'radial-gradient(circle, rgba(142,210,255,0.06) 0%, transparent 70%)',
+            pointerEvents: 'none',
+            filter: 'blur(40px)',
+          }} />
+          <div style={{
+            position: 'absolute', top: '40%', right: '15%',
+            width: 320, height: 320,
+            background: 'radial-gradient(circle, rgba(196,181,253,0.05) 0%, transparent 70%)',
+            pointerEvents: 'none',
+            filter: 'blur(40px)',
+          }} />
+        </>
+      )}
+
       <div style={{
         width: '100%',
         maxWidth: 760,
@@ -62,21 +84,27 @@ export default function Hero() {
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
+        position: 'relative',
+        zIndex: 1,
       }}>
 
         {/* ASCII Art */}
-        <pre style={{
-          fontFamily: "'Roboto Mono', monospace",
-          color: 'var(--color-primary)',
-          fontSize: 'clamp(8px, 1.6vw, 15px)',
-          lineHeight: 1.15,
-          margin: '0 0 32px',
-          textShadow: isMinimal ? 'none' : '0 0 20px var(--color-glow)',
-          whiteSpace: 'pre',
-          overflow: 'hidden',
-          display: 'inline-block',
-          textAlign: 'left',
-        }}>
+        <pre
+          aria-hidden="true"
+          style={{
+            fontFamily: "'Roboto Mono', monospace",
+            color: 'var(--color-primary)',
+            fontSize: 'clamp(8px, 1.6vw, 15px)',
+            lineHeight: 1.15,
+            margin: '0 0 32px',
+            textShadow: (isMinimal || isLiquidGlass) ? 'none' : '0 0 20px var(--color-glow)',
+            whiteSpace: 'pre',
+            overflow: 'hidden',
+            display: 'inline-block',
+            textAlign: 'left',
+            opacity: isLiquidGlass ? 0.9 : 1,
+          }}
+        >
           {ASCII_ALOK}
         </pre>
 
@@ -87,12 +115,12 @@ export default function Hero() {
           fontSize: 'clamp(20px, 4vw, 36px)',
           fontWeight: 400,
           margin: '0 0 20px',
-          textShadow: isMinimal ? 'none' : '0 0 15px var(--color-glow)',
+          textShadow: (isMinimal || isLiquidGlass) ? 'none' : '0 0 15px var(--color-glow)',
           lineHeight: 1.3,
         }}>
           <span style={{ color: 'var(--color-secondary)' }}>&gt; </span>
           {displayed}
-          <span className="blinking-cursor">█</span>
+          <span className="blinking-cursor" aria-hidden="true">█</span>
         </h1>
 
         {/* Tagline */}
@@ -105,11 +133,11 @@ export default function Hero() {
           margin: '0 0 40px',
           textAlign: 'center',
         }}>
-          Initializing neural interface... System online. Building scalable apps,<br />
+          Building scalable full-stack applications,
           crafting elegant UIs, and writing code that doesn&apos;t just work — it performs.
         </p>
 
-        {/* CTA Buttons — centered row */}
+        {/* CTA Buttons */}
         <div style={{
           display: 'flex',
           gap: 16,
@@ -126,28 +154,32 @@ export default function Hero() {
               padding: '13px 32px',
               fontSize: 12,
               fontWeight: 700,
-              letterSpacing: '0.15em',
+              letterSpacing: '0.12em',
               textTransform: 'uppercase',
               textDecoration: 'none',
               border: '1px solid var(--color-primary)',
-              boxShadow: isMinimal ? 'none' : '0 0 20px var(--color-glow)',
+              boxShadow: (isMinimal || isLiquidGlass) ? 'none' : '0 0 20px var(--color-glow)',
               transition: 'all 0.2s ease',
               display: 'inline-block',
               whiteSpace: 'nowrap',
+              borderRadius: isLiquidGlass ? 8 : 0,
             }}
             onMouseEnter={e => {
-              e.currentTarget.style.boxShadow = '0 0 40px var(--color-glow)';
+              e.currentTarget.style.boxShadow = isLiquidGlass
+                ? '0 8px 30px rgba(142,210,255,0.3)'
+                : '0 0 40px var(--color-glow)';
               e.currentTarget.style.transform = 'translateY(-2px)';
             }}
             onMouseLeave={e => {
-              e.currentTarget.style.boxShadow = isMinimal ? 'none' : '0 0 20px var(--color-glow)';
+              e.currentTarget.style.boxShadow = (isMinimal || isLiquidGlass) ? 'none' : '0 0 20px var(--color-glow)';
               e.currentTarget.style.transform = 'translateY(0)';
             }}
           >
-            [ INITIALIZE_PROJECTS ]
+            VIEW PROJECTS
           </a>
+
           <a
-            href="#contact"
+            href="#about"
             style={{
               fontFamily: "'Roboto Mono', monospace",
               background: 'transparent',
@@ -155,13 +187,14 @@ export default function Hero() {
               padding: '13px 32px',
               fontSize: 12,
               fontWeight: 700,
-              letterSpacing: '0.15em',
+              letterSpacing: '0.12em',
               textTransform: 'uppercase',
               textDecoration: 'none',
               border: '1px solid var(--color-secondary)',
               transition: 'all 0.2s ease',
               display: 'inline-block',
               whiteSpace: 'nowrap',
+              borderRadius: isLiquidGlass ? 8 : 0,
             }}
             onMouseEnter={e => {
               e.currentTarget.style.boxShadow = '0 0 20px var(--color-glow-secondary)';
@@ -172,12 +205,13 @@ export default function Hero() {
               e.currentTarget.style.transform = 'translateY(0)';
             }}
           >
-            [ CONTACT_ME ]
+            ABOUT ME
           </a>
+
           <a
             href={PROFILE_LINKS.resume}
             target="_blank"
-            rel="noreferrer"
+            rel="noreferrer noopener"
             style={{
               fontFamily: "'Roboto Mono', monospace",
               background: 'transparent',
@@ -185,24 +219,28 @@ export default function Hero() {
               padding: '13px 32px',
               fontSize: 12,
               fontWeight: 700,
-              letterSpacing: '0.15em',
+              letterSpacing: '0.12em',
               textTransform: 'uppercase',
               textDecoration: 'none',
               border: '1px solid var(--color-primary)',
               transition: 'all 0.2s ease',
               display: 'inline-block',
               whiteSpace: 'nowrap',
+              borderRadius: isLiquidGlass ? 8 : 0,
+              opacity: 0.75,
             }}
             onMouseEnter={e => {
               e.currentTarget.style.boxShadow = '0 0 20px var(--color-glow)';
               e.currentTarget.style.transform = 'translateY(-2px)';
+              e.currentTarget.style.opacity = '1';
             }}
             onMouseLeave={e => {
               e.currentTarget.style.boxShadow = 'none';
               e.currentTarget.style.transform = 'translateY(0)';
+              e.currentTarget.style.opacity = '0.75';
             }}
           >
-            [ DOWNLOAD_CV ]
+            RESUME ↗
           </a>
         </div>
 

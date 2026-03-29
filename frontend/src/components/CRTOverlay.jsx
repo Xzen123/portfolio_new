@@ -1,4 +1,3 @@
-import { useEffect, useRef } from 'react';
 import { useWindow } from '../context/WindowContext';
 import { useTheme } from '../context/ThemeContext';
 import './CRTOverlay.css';

@@ -1,10 +1,7 @@
 import { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { themes, defaultTheme } from '../themes/themes';
-import { API_ENDPOINTS } from '../config/api';
 
 const ThemeContext = createContext(null);
-
-const API_URL = API_ENDPOINTS.theme;
 const LS_KEY = 'portfolio-theme';
 
 function applyTheme(theme) {
@@ -23,64 +20,41 @@ function applyTheme(theme) {
   root.style.setProperty('--color-glow-secondary', c.glowSecondary);
   root.style.setProperty('--color-scanline', c.scanline);
   document.body.style.backgroundColor = c.bg;
-  // Set data-theme on <html> for cursor CSS selectors
   root.setAttribute('data-theme', theme.name);
-  // Toggle minimal mode globally
+
   if (theme.minimal) {
     document.body.classList.add('theme-minimal');
   } else {
     document.body.classList.remove('theme-minimal');
   }
+
+  if (theme.name === 'liquidglass') {
+    document.body.classList.add('theme-liquidglass');
+  } else {
+    document.body.classList.remove('theme-liquidglass');
+  }
 }
-
-
 
 export function ThemeProvider({ children }) {
   const [currentThemeName, setCurrentThemeName] = useState(defaultTheme);
-  const [isLoading, setIsLoading] = useState(true);
 
-  // Load theme on mount
+  // Load theme from localStorage on mount — no backend call needed
   useEffect(() => {
-    const loadTheme = async () => {
-      try {
-        const res = await fetch(API_URL, { signal: AbortSignal.timeout(2000) });
-        const data = await res.json();
-        if (data.themeName && themes[data.themeName]) {
-          setCurrentThemeName(data.themeName);
-          applyTheme(themes[data.themeName]);
-          localStorage.setItem(LS_KEY, data.themeName);
-        }
-      } catch {
-        // Fallback to localStorage
-        const saved = localStorage.getItem(LS_KEY) || defaultTheme;
-        setCurrentThemeName(saved);
-        applyTheme(themes[saved] || themes[defaultTheme]);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    loadTheme();
+    const saved = localStorage.getItem(LS_KEY) || defaultTheme;
+    const theme = themes[saved] || themes[defaultTheme];
+    setCurrentThemeName(theme.name);
+    applyTheme(theme);
   }, []);
 
-  const setTheme = useCallback(async (name) => {
+  const setTheme = useCallback((name) => {
     if (!themes[name]) return;
     setCurrentThemeName(name);
     applyTheme(themes[name]);
     localStorage.setItem(LS_KEY, name);
-    try {
-      await fetch(API_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ themeName: name }),
-        signal: AbortSignal.timeout(2000),
-      });
-    } catch {
-      // Silently fail — localStorage already saved it
-    }
   }, []);
 
   return (
-    <ThemeContext.Provider value={{ currentThemeName, currentTheme: themes[currentThemeName], setTheme, isLoading, themes }}>
+    <ThemeContext.Provider value={{ currentThemeName, currentTheme: themes[currentThemeName], setTheme, themes }}>
       {children}
     </ThemeContext.Provider>
   );

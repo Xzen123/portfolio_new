@@ -1,20 +1,26 @@
 import { useState } from 'react';
+import { useTheme } from '../context/ThemeContext';
 import { API_ENDPOINTS } from '../config/api';
 
-const CONTACT_LINKS = {
-  github: 'https://github.com/Xzen123',
-  linkedin: 'https://www.linkedin.com/in/alok-kumar-9958b1266/',
-  email: 'mailto:alokcse03@gmail.com',
-  phone: 'tel:9508397337',
-  whatsapp: 'https://wa.me/919508397337',
-};
-
-const CONTACT_API_URL = API_ENDPOINTS.contact;
+const CONTACT_LINKS = [
+  { label: 'GITHUB', href: 'https://github.com/Xzen123' },
+  { label: 'LINKEDIN', href: 'https://www.linkedin.com/in/alok-kumar-9958b1266/' },
+  { label: 'PHONE', href: 'tel:9508397337' },
+  { label: 'WHATSAPP', href: 'https://wa.me/919508397337' },
+  { label: 'EMAIL', href: 'mailto:alokcse03@gmail.com' },
+];
 
 export default function Contact() {
+  const { currentTheme } = useTheme();
+  const isLiquidGlass = currentTheme?.name === 'liquidglass';
+
   const [form, setForm] = useState({ name: '', email: '', message: '' });
-  const [status, setStatus] = useState('idle'); // idle | sending | sent | error
+  const [status, setStatus] = useState('idle');
   const [errorMsg, setErrorMsg] = useState('');
+
+  const onChange = (key) => (e) => {
+    setForm((prev) => ({ ...prev, [key]: e.target.value }));
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -22,11 +28,10 @@ export default function Contact() {
     setErrorMsg('');
 
     try {
-      const res = await fetch(CONTACT_API_URL, {
+      const res = await fetch(API_ENDPOINTS.contact, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(form),
-        signal: AbortSignal.timeout(12000),
       });
 
       const data = await res.json().catch(() => ({}));
@@ -36,7 +41,7 @@ export default function Contact() {
 
       setStatus('sent');
       setForm({ name: '', email: '', message: '' });
-      setTimeout(() => setStatus('idle'), 4000);
+      setTimeout(() => setStatus('idle'), 3500);
     } catch (err) {
       setStatus('error');
       setErrorMsg(err.message || 'Failed to send message.');
@@ -44,122 +49,127 @@ export default function Contact() {
   };
 
   const inputStyle = {
-    background: 'transparent',
-    border: 'none',
-    borderBottom: '1px solid var(--color-border)',
-    color: 'var(--color-primary)',
+    width: '100%',
+    border: '1px solid var(--color-border)',
+    background: isLiquidGlass ? 'rgba(198, 229, 255, 0.06)' : 'var(--color-surface)',
+    color: 'var(--color-text)',
     fontFamily: "'Roboto Mono', monospace",
-    fontSize: 13,
-    padding: '8px 0',
-    flex: 1,
+    fontSize: 12,
+    padding: '11px 12px',
+    borderRadius: isLiquidGlass ? 10 : 0,
     outline: 'none',
-    caretColor: 'var(--color-primary)',
-    transition: 'border-color 0.2s',
   };
 
   return (
-    <section id="contact" style={{ padding: '80px 24px', maxWidth: 720, margin: '0 auto' }}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 40 }}>
+    <section id="contact" style={{ padding: '80px 24px', maxWidth: 1000, margin: '0 auto' }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 14 }}>
         <span style={{ fontFamily: "'Roboto Mono', monospace", color: 'var(--color-secondary)', fontWeight: 700, fontSize: 18 }}>$</span>
-        <h2 style={{ fontFamily: "'Roboto Mono', monospace", color: 'var(--color-primary)', fontSize: 20, fontWeight: 400, textTransform: 'uppercase', letterSpacing: '0.1em', textShadow: '0 0 15px var(--color-glow)', margin: 0 }}>./contact.sh</h2>
+        <h2 style={{
+          fontFamily: "'Roboto Mono', monospace",
+          color: 'var(--color-primary)',
+          fontSize: 20,
+          fontWeight: 400,
+          textTransform: 'uppercase',
+          letterSpacing: '0.1em',
+          textShadow: isLiquidGlass ? 'none' : '0 0 15px var(--color-glow)',
+          margin: 0,
+        }}>
+          ./contact
+        </h2>
       </div>
 
+      <p style={{
+        fontFamily: "'Roboto Mono', monospace",
+        color: 'var(--color-text-dim)',
+        fontSize: 12,
+        marginBottom: 28,
+        lineHeight: 1.7,
+      }}>
+        Send a message and I will respond by email.
+      </p>
+
       <div style={{
-        background: 'var(--color-card)',
+        background: isLiquidGlass ? 'rgba(18, 33, 62, 0.62)' : 'var(--color-card)',
         border: '1px solid var(--color-border)',
-        padding: 32,
-        boxShadow: '0 0 30px var(--color-glow)',
+        borderRadius: isLiquidGlass ? 16 : 0,
+        boxShadow: isLiquidGlass ? '0 10px 40px rgba(171, 224, 255, 0.16)' : '0 0 24px var(--color-glow)',
+        padding: 22,
       }}>
         {status === 'sent' ? (
           <div style={{
             fontFamily: "'Roboto Mono', monospace",
             color: 'var(--color-primary)',
-            fontSize: 14,
             textAlign: 'center',
-            padding: '40px 0',
-            textShadow: '0 0 15px var(--color-glow)',
+            padding: '40px 16px',
+            lineHeight: 1.8,
           }}>
-            <div style={{ fontSize: 24, marginBottom: 12 }}>✓</div>
-            <div>PACKET_SENT successfully</div>
-            <div style={{ color: 'var(--color-text-dim)', fontSize: 12, marginTop: 8 }}>I'll respond within 24 hours.</div>
+            <div style={{ fontSize: 24, marginBottom: 10 }}>✓</div>
+            <div>MESSAGE SENT</div>
+            <div style={{ color: 'var(--color-text-dim)', fontSize: 11 }}>Thanks for reaching out.</div>
           </div>
         ) : (
           <form onSubmit={handleSubmit}>
-            {[
-              { label: 'ID_NAME:', key: 'name', type: 'text', placeholder: 'Type name...' },
-              { label: 'ID_EMAIL:', key: 'email', type: 'email', placeholder: 'Type email...' },
-            ].map((field) => (
-              <div key={field.key} style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 24, fontFamily: "'Roboto Mono', monospace" }}>
-                <span style={{ color: 'var(--color-secondary)', fontSize: 13, flexShrink: 0 }}>{field.label}</span>
-                <input
-                  type={field.type}
-                  value={form[field.key]}
-                  onChange={(e) => setForm({ ...form, [field.key]: e.target.value })}
-                  placeholder={field.placeholder}
-                  required
-                  style={inputStyle}
-                  onFocus={e => { e.target.style.borderBottomColor = 'var(--color-primary)'; }}
-                  onBlur={e => { e.target.style.borderBottomColor = 'var(--color-border)'; }}
-                />
-              </div>
-            ))}
-
-            <div style={{ marginBottom: 28 }}>
-              <div style={{ fontFamily: "'Roboto Mono', monospace", fontSize: 12, color: 'var(--color-secondary)', marginBottom: 8, letterSpacing: '0.1em' }}>MESSAGE_BODY:</div>
-              <textarea
-                value={form.message}
-                onChange={(e) => setForm({ ...form, message: e.target.value })}
-                placeholder="Write transmission..."
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: 12, marginBottom: 12 }}>
+              <input
+                aria-label="Your name"
+                placeholder="Your name"
                 required
-                rows={5}
-                style={{
-                  ...inputStyle,
-                  display: 'block',
-                  width: '100%',
-                  resize: 'vertical',
-                  borderBottom: 'none',
-                  border: '1px solid var(--color-border)',
-                  padding: '12px',
-                  boxSizing: 'border-box',
-                }}
-                onFocus={e => { e.target.style.borderColor = 'var(--color-primary)'; e.target.style.boxShadow = '0 0 10px var(--color-glow)'; }}
-                onBlur={e => { e.target.style.borderColor = 'var(--color-border)'; e.target.style.boxShadow = 'none'; }}
+                value={form.name}
+                onChange={onChange('name')}
+                style={inputStyle}
+              />
+              <input
+                aria-label="Your email"
+                placeholder="your@email.com"
+                type="email"
+                required
+                value={form.email}
+                onChange={onChange('email')}
+                style={inputStyle}
               />
             </div>
 
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <div style={{ fontFamily: "'Roboto Mono', monospace", fontSize: 10, color: 'var(--color-text-dim)', display: 'flex', gap: 6, alignItems: 'center' }}>
-                <span></span> ENCRYPTED_LINK_ACTIVE
+            <textarea
+              aria-label="Your message"
+              placeholder="Write your message..."
+              required
+              rows={6}
+              value={form.message}
+              onChange={onChange('message')}
+              style={{ ...inputStyle, resize: 'vertical', marginBottom: 12 }}
+            />
+
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
+              <div style={{ fontFamily: "'Roboto Mono', monospace", fontSize: 11, color: 'var(--color-text-dim)' }}>
+                Endpoint: {API_ENDPOINTS.contact}
               </div>
               <button
                 type="submit"
                 disabled={status === 'sending'}
                 style={{
                   fontFamily: "'Roboto Mono', monospace",
-                  background: status === 'sending' ? 'var(--color-text-dim)' : 'var(--color-primary)',
+                  background: 'var(--color-primary)',
                   color: 'var(--color-bg)',
-                  border: 'none',
-                  padding: '12px 28px',
-                  fontSize: 12,
+                  border: '1px solid var(--color-primary)',
+                  borderRadius: isLiquidGlass ? 10 : 0,
+                  padding: '10px 18px',
+                  fontSize: 11,
                   fontWeight: 700,
-                  letterSpacing: '0.15em',
-                  textTransform: 'uppercase',
+                  letterSpacing: '0.1em',
                   cursor: status === 'sending' ? 'not-allowed' : 'pointer',
-                  boxShadow: '0 0 20px var(--color-glow)',
-                  transition: 'all 0.2s ease',
+                  opacity: status === 'sending' ? 0.7 : 1,
                 }}
               >
-                {status === 'sending' ? 'SENDING...' : 'SEND_PACKET'}
+                {status === 'sending' ? 'SENDING...' : 'SEND MESSAGE'}
               </button>
             </div>
 
             {status === 'error' && (
               <div style={{
-                marginTop: 14,
+                marginTop: 12,
                 fontFamily: "'Roboto Mono', monospace",
                 fontSize: 11,
                 color: 'var(--color-secondary)',
-                letterSpacing: '0.03em',
               }}>
                 ERROR: {errorMsg}
               </div>
@@ -168,26 +178,27 @@ export default function Contact() {
         )}
       </div>
 
-      {/* Social Links */}
-      <div style={{ display: 'flex', justifyContent: 'center', gap: 24, marginTop: 32 }}>
-        {[
-          { label: '[ GITHUB ]', href: CONTACT_LINKS.github },
-          { label: '[ LINKEDIN ]', href: CONTACT_LINKS.linkedin },
-          { label: '[ PHONE ]', href: CONTACT_LINKS.phone },
-          { label: '[ WHATSAPP ]', href: CONTACT_LINKS.whatsapp },
-          { label: '[ EMAIL ]', href: CONTACT_LINKS.email },
-        ].map((link) => (
-          <a key={link.label} href={link.href} target="_blank" rel="noreferrer" style={{
-            fontFamily: "'Roboto Mono', monospace",
-            fontSize: 12,
-            color: 'var(--color-primary)',
-            textDecoration: 'none',
-            letterSpacing: '0.05em',
-            transition: 'all 0.2s ease',
-          }}
-            onMouseEnter={e => { e.target.style.textShadow = '0 0 12px var(--color-glow)'; }}
-            onMouseLeave={e => { e.target.style.textShadow = 'none'; }}
-          >{link.label}</a>
+      <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginTop: 20 }}>
+        {CONTACT_LINKS.map((link) => (
+          <a
+            key={link.label}
+            href={link.href}
+            target={link.href.startsWith('http') ? '_blank' : undefined}
+            rel={link.href.startsWith('http') ? 'noreferrer noopener' : undefined}
+            style={{
+              fontFamily: "'Roboto Mono', monospace",
+              fontSize: 11,
+              color: 'var(--color-primary)',
+              textDecoration: 'none',
+              border: '1px solid var(--color-border)',
+              background: isLiquidGlass ? 'rgba(198, 229, 255, 0.05)' : 'var(--color-card)',
+              borderRadius: isLiquidGlass ? 999 : 0,
+              padding: '7px 11px',
+              letterSpacing: '0.06em',
+            }}
+          >
+            {link.label}
+          </a>
         ))}
       </div>
     </section>

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useMemo } from 'react';
 
 const S = {
   section: {
@@ -30,74 +30,19 @@ const S = {
   },
 };
 
-const GITHUB_USERNAME = 'Xzen123';
-const DEFAULT_GITHUB_STATS = {
-  repos: '15',
-  stars: '2+',
-  forks: '1+',
+const PROFILE_STATS = {
+  repos: '20+',
+  stars: '10+',
+  forks: '5+',
 };
 
 export default function About() {
-  const [githubStats, setGithubStats] = useState(DEFAULT_GITHUB_STATS);
-  const [lastSyncedAt, setLastSyncedAt] = useState(null);
-
-  useEffect(() => {
-    let isMounted = true;
-
-    const loadGithubStats = async () => {
-      try {
-        const allRepos = [];
-        let page = 1;
-
-        while (true) {
-          const response = await fetch(
-            `https://api.github.com/users/${GITHUB_USERNAME}/repos?per_page=100&page=${page}`
-          );
-
-          if (!response.ok) {
-            throw new Error(`GitHub API responded with ${response.status}`);
-          }
-
-          const repos = await response.json();
-          allRepos.push(...repos);
-
-          if (repos.length < 100) {
-            break;
-          }
-
-          page += 1;
-        }
-
-        const ownRepos = allRepos.filter((repo) => !repo.fork);
-        const totalStars = ownRepos.reduce((sum, repo) => sum + (repo.stargazers_count || 0), 0);
-        const totalForks = ownRepos.reduce((sum, repo) => sum + (repo.forks_count || 0), 0);
-
-        if (isMounted) {
-          setGithubStats({
-            repos: String(ownRepos.length),
-            stars: totalStars > 0 ? `${totalStars}+` : '0',
-            forks: totalForks > 0 ? `${totalForks}+` : '0',
-          });
-          setLastSyncedAt(new Date());
-        }
-      } catch {
-        // Keep fallback stats if API fails or rate-limits.
-      }
-    };
-
-    loadGithubStats();
-
-    return () => {
-      isMounted = false;
-    };
-  }, []);
-
-  const stats = [
-    { label: 'REPOS_SHIPPED', value: githubStats.repos },
-    { label: 'GITHUB_STARS', value: githubStats.stars },
-    { label: 'COMMUNITY_FORKS', value: githubStats.forks },
+  const stats = useMemo(() => [
+    { label: 'REPOS_SHIPPED', value: PROFILE_STATS.repos },
+    { label: 'GITHUB_STARS', value: PROFILE_STATS.stars },
+    { label: 'COMMUNITY_FORKS', value: PROFILE_STATS.forks },
     { label: 'COFFEE_CONSUMED', value: '∞' },
-  ];
+  ], []);
 
   return (
     <section id="about" style={S.section}>
@@ -185,9 +130,7 @@ export default function About() {
             color: 'var(--color-text-dim)',
             letterSpacing: '0.08em',
           }}>
-            {lastSyncedAt
-              ? `LAST_SYNCED_FROM_GITHUB: ${lastSyncedAt.toLocaleString('en-IN', { hour12: true })}`
-              : 'LAST_SYNCED_FROM_GITHUB: PENDING'}
+            PROFILE SNAPSHOT: MANUALLY CURATED
           </div>
         </div>
       </div>

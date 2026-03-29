@@ -16,6 +16,10 @@ const allowedOrigins = [
   'http://localhost:5173',
   'http://127.0.0.1:5173',
   'https://portfolio-new-taupe-five.vercel.app',
+  ...(process.env.CORS_ALLOWED_ORIGINS || '')
+    .split(',')
+    .map((origin) => origin.trim())
+    .filter(Boolean),
 ];
 
 // Middleware
@@ -26,8 +30,7 @@ app.use(cors({
     }
 
     const isAllowed =
-      allowedOrigins.includes(origin) ||
-      origin.endsWith('.vercel.app');
+      allowedOrigins.includes(origin);
 
     if (isAllowed) {
       return callback(null, true);

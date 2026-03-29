@@ -1,4 +1,4 @@
-// 5 Terminal Themes + 1 Minimal Theme
+// 5 Terminal Themes + 1 Apple Liquid Glass + 1 Minimal
 export const themes = {
   cyberpunk: {
     name: 'cyberpunk',
@@ -100,6 +100,27 @@ export const themes = {
       scanline: 'rgba(255,179,0,0.05)',
     },
   },
+  liquidglass: {
+    name: 'liquidglass',
+    label: 'Liquid Glass',
+    icon: '🫧',
+    minimal: false,
+    liquidglass: true, // enables special glassmorphism rendering
+    colors: {
+      primary: '#c7e9ff',
+      secondary: '#d7c7ff',
+      bg: '#0a1528',
+      bgSurface: 'rgba(18, 33, 62, 0.72)',
+      bgCard: 'rgba(24, 42, 74, 0.56)',
+      text: '#eef7ff',
+      textDim: '#9ab6d8',
+      border: 'rgba(200, 233, 255, 0.26)',
+      borderHover: 'rgba(215, 199, 255, 0.62)',
+      glow: 'rgba(171, 224, 255, 0.34)',
+      glowSecondary: 'rgba(215, 199, 255, 0.28)',
+      scanline: 'rgba(0,0,0,0)',
+    },
+  },
   minimal: {
     name: 'minimal',
     label: 'Minimal',
@@ -115,12 +136,12 @@ export const themes = {
       textDim: '#6c757d',
       border: 'rgba(0,0,0,0.1)',
       borderHover: 'rgba(233,69,96,0.4)',
-      glow: 'rgba(0,0,0,0)',       // no glow
+      glow: 'rgba(0,0,0,0)',
       glowSecondary: 'rgba(0,0,0,0)',
-      scanline: 'rgba(0,0,0,0)',   // no scanline
+      scanline: 'rgba(0,0,0,0)',
     },
   },
 };
 
 export const themeNames = Object.keys(themes);
-export const defaultTheme = 'cyberpunk';
+export const defaultTheme = 'liquidglass';

@@ -1,114 +1,144 @@
 import { useEffect, useState } from 'react';
-import { API_ENDPOINTS } from '../config/api';
+import { useTheme } from '../context/ThemeContext';
 
-const STATUS_API_URL = API_ENDPOINTS.projectsStatus;
+const FOOTER_LINKS = [
+  { label: 'GITHUB', href: 'https://github.com/Xzen123', icon: '⌥' },
+  { label: 'LINKEDIN', href: 'https://www.linkedin.com/in/alok-kumar-9958b1266/', icon: '⊛' },
+  { label: 'WHATSAPP', href: 'https://wa.me/919508397337', icon: '⊕' },
+  { label: 'PHONE', href: 'tel:9508397337', icon: '⊙' },
+  { label: 'EMAIL', href: 'mailto:alokcse03@gmail.com', icon: '✉' },
+];
 
 export default function Footer() {
+  const { currentTheme } = useTheme();
+  const isLiquidGlass = currentTheme?.name === 'liquidglass';
+
   const [isCompact, setIsCompact] = useState(false);
-  const [apiStatus, setApiStatus] = useState({
-    github: { mode: 'fallback' },
-    gemini: { mode: 'fallback' },
-  });
+  const [collapsed, setCollapsed] = useState(false);
 
   useEffect(() => {
     const media = window.matchMedia('(max-width: 980px)');
     const sync = () => setIsCompact(media.matches);
     sync();
-
     if (media.addEventListener) {
       media.addEventListener('change', sync);
       return () => media.removeEventListener('change', sync);
     }
-
     media.addListener(sync);
     return () => media.removeListener(sync);
   }, []);
 
-  useEffect(() => {
-    let isMounted = true;
-
-    const fetchStatus = async () => {
-      try {
-        const res = await fetch(STATUS_API_URL, { signal: AbortSignal.timeout(5000) });
-        if (!res.ok) return;
-        const data = await res.json();
-        if (isMounted && data?.github && data?.gemini) {
-          setApiStatus(data);
-        }
-      } catch {
-        if (isMounted) {
-          setApiStatus({ github: { mode: 'fallback' }, gemini: { mode: 'fallback' } });
-        }
-      }
-    };
-
-    fetchStatus();
-    const intervalId = setInterval(fetchStatus, 30000);
-
-    return () => {
-      isMounted = false;
-      clearInterval(intervalId);
-    };
-  }, []);
-
-  const footerLinks = [
-    { label: '[ GITHUB ]', href: 'https://github.com/Xzen123' },
-    { label: '[ LINKEDIN ]', href: 'https://www.linkedin.com/in/alok-kumar-9958b1266/' },
-    { label: '[ WHATSAPP ]', href: 'https://wa.me/919508397337' },
-    { label: '[ 9508397337 ]', href: 'tel:9508397337' },
-    { label: '[ EMAIL ]', href: 'mailto:alokcse03@gmail.com' },
-  ];
-
   return (
-    <footer style={{
-      position: 'fixed',
-      bottom: 0, left: 0, right: 0,
-      minHeight: isCompact ? 86 : 56,
-      display: 'flex',
-      flexDirection: isCompact ? 'column' : 'row',
-      justifyContent: isCompact ? 'center' : 'space-between',
-      alignItems: isCompact ? 'stretch' : 'center',
-      padding: isCompact ? '8px 14px 12px' : '6px 24px 8px',
-      gap: isCompact ? 8 : 0,
-      background: 'color-mix(in srgb, var(--color-surface) 95%, transparent)',
-      backdropFilter: 'blur(10px)',
-      borderTop: '1px solid var(--color-border)',
-      zIndex: 90,
-      fontFamily: "'Roboto Mono', monospace",
-      fontSize: isCompact ? 9 : 10,
-      letterSpacing: '0.12em',
-      textTransform: 'uppercase',
-    }}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: 8, color: 'var(--color-primary)', justifyContent: isCompact ? 'center' : 'flex-start' }}>
-        <span style={{ width: 7, height: 7, borderRadius: '50%', background: 'var(--color-primary)', display: 'inline-block', boxShadow: '0 0 8px var(--color-glow)', animation: 'pulse 2s infinite' }} />
-        ONLINE | UPTIME: 99.9% | LAST_UPDATED: 2026 | V3.0.0-MERN
+    <footer
+      id="footer"
+      role="contentinfo"
+      style={{
+        position: 'fixed',
+        bottom: 0, left: 0, right: 0,
+        minHeight: collapsed ? 28 : (isCompact ? 80 : 52),
+        display: 'flex',
+        flexDirection: collapsed ? 'row' : (isCompact ? 'column' : 'row'),
+        justifyContent: collapsed ? 'space-between' : (isCompact ? 'center' : 'space-between'),
+        alignItems: collapsed ? 'center' : (isCompact ? 'stretch' : 'center'),
+        padding: collapsed ? '4px 14px' : (isCompact ? '8px 14px 10px' : '6px 24px 8px'),
+        gap: collapsed ? 0 : (isCompact ? 7 : 0),
+        background: isLiquidGlass
+          ? 'rgba(6,12,24,0.7)'
+          : 'color-mix(in srgb, var(--color-surface) 95%, transparent)',
+        backdropFilter: 'blur(16px) saturate(150%)',
+        WebkitBackdropFilter: 'blur(16px) saturate(150%)',
+        borderTop: `1px solid ${isLiquidGlass ? 'rgba(168,216,255,0.1)' : 'var(--color-border)'}`,
+        zIndex: 90,
+        fontFamily: "'Roboto Mono', monospace",
+        fontSize: isCompact ? 9 : 10,
+        letterSpacing: '0.1em',
+        transition: 'min-height 0.28s ease, padding 0.28s ease',
+      }}
+    >
+      {/* Status indicator */}
+      <div style={{
+        display: 'flex',
+        alignItems: 'center',
+        gap: 8,
+        color: 'var(--color-primary)',
+        justifyContent: 'flex-start',
+        whiteSpace: 'nowrap',
+      }}>
+        <span style={{
+          width: 6, height: 6, borderRadius: '50%',
+          background: 'var(--color-primary)',
+          display: 'inline-block',
+          boxShadow: '0 0 6px var(--color-glow)',
+          animation: 'pulse 2s infinite',
+          flexShrink: 0,
+        }} />
+        {collapsed
+          ? 'ALOK.DEV'
+          : 'ONLINE · V3.0.0 · LAST_UPDATED: 2026'}
       </div>
-      <div style={{ display: 'flex', flexDirection: 'column', alignItems: isCompact ? 'center' : 'flex-end', gap: 6, color: 'var(--color-text-dim)', marginBottom: isCompact ? 0 : 2 }}>
-        <div style={{
-          fontFamily: "'Roboto Mono', monospace",
-          fontSize: isCompact ? 8 : 9,
-          letterSpacing: '0.08em',
-          color: 'var(--color-text-dim)',
-          textAlign: isCompact ? 'center' : 'right',
-        }}>
-          API_STATUS: GH[{apiStatus.github.mode.toUpperCase()}] | GM[{apiStatus.gemini.mode.toUpperCase()}]
-        </div>
 
-        <div style={{ display: 'flex', gap: isCompact ? 10 : 16, flexWrap: 'wrap', justifyContent: isCompact ? 'center' : 'flex-end' }}>
-          {footerLinks.map((link) => (
-            <a
-              key={link.label}
-              href={link.href}
-              target="_blank"
-              rel="noreferrer"
-              style={{ color: 'inherit', textDecoration: 'none', transition: 'color 0.2s' }}
-              onMouseEnter={e => e.target.style.color = 'var(--color-primary)'}
-              onMouseLeave={e => e.target.style.color = 'var(--color-text-dim)'}
-            >
-              {link.label}
-            </a>
-          ))}
-        </div>
+      {/* Collapse toggle */}
+      <button
+        onClick={() => setCollapsed(v => !v)}
+        aria-label={collapsed ? 'Expand footer' : 'Collapse footer'}
+        aria-expanded={!collapsed}
+        style={{
+          fontFamily: "'Roboto Mono', monospace",
+          fontSize: 9,
+          letterSpacing: '0.08em',
+          color: collapsed ? 'var(--color-bg)' : 'var(--color-primary)',
+          border: '1px solid var(--color-primary)',
+          background: collapsed ? 'var(--color-primary)' : 'transparent',
+          padding: '3px 8px',
+          cursor: 'pointer',
+          boxShadow: collapsed ? '0 0 8px var(--color-glow)' : 'none',
+          transition: 'all 0.25s ease',
+          borderRadius: isLiquidGlass ? 4 : 0,
+          flexShrink: 0,
+        }}
+      >
+        {collapsed ? '▲ EXPAND' : '▼ PEEK'}
+      </button>
+
+      {/* Links section */}
+      <div style={{
+        display: 'flex',
+        flexDirection: isCompact ? 'row' : 'row',
+        alignItems: 'center',
+        justifyContent: isCompact ? 'center' : 'flex-end',
+        gap: isCompact ? 12 : 18,
+        maxHeight: collapsed ? 0 : 80,
+        opacity: collapsed ? 0 : 1,
+        overflow: 'hidden',
+        pointerEvents: collapsed ? 'none' : 'auto',
+        transition: 'max-height 0.26s ease, opacity 0.2s ease',
+        flexWrap: 'wrap',
+      }}>
+        {FOOTER_LINKS.map(link => (
+          <a
+            key={link.label}
+            href={link.href}
+            target="_blank"
+            rel="noreferrer noopener"
+            aria-label={link.label}
+            style={{
+              color: 'var(--color-text-dim)',
+              textDecoration: 'none',
+              fontSize: isCompact ? 9 : 10,
+              letterSpacing: '0.08em',
+              transition: 'color 0.2s ease',
+              display: 'flex',
+              alignItems: 'center',
+              gap: 4,
+              whiteSpace: 'nowrap',
+            }}
+            onMouseEnter={e => (e.currentTarget.style.color = 'var(--color-primary)')}
+            onMouseLeave={e => (e.currentTarget.style.color = 'var(--color-text-dim)')}
+          >
+            <span aria-hidden="true" style={{ fontSize: 10 }}>{link.icon}</span>
+            {link.label}
+          </a>
+        ))}
       </div>
     </footer>
   );

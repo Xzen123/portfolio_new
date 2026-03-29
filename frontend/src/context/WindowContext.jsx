@@ -8,6 +8,9 @@ export function WindowProvider({ children }) {
   const [crtEnabled, setCrtEnabled] = useState(() => {
     return localStorage.getItem('crt-enabled') !== 'false';
   });
+  const [reduceMotion, setReduceMotion] = useState(() => {
+    return localStorage.getItem('reduce-motion') === 'true';
+  });
 
   // Sync fullscreen state with browser
   useEffect(() => {
@@ -36,8 +39,35 @@ export function WindowProvider({ children }) {
     });
   }, []);
 
+  const toggleReduceMotion = useCallback(() => {
+    setReduceMotion((v) => {
+      localStorage.setItem('reduce-motion', String(!v));
+      return !v;
+    });
+  }, []);
+
+  useEffect(() => {
+    if (reduceMotion) {
+      document.body.classList.add('reduce-motion');
+    } else {
+      document.body.classList.remove('reduce-motion');
+    }
+  }, [reduceMotion]);
+
   return (
-    <WindowContext.Provider value={{ isMinimized, isFullscreen, crtEnabled, minimize, restore, toggleFullscreen, toggleCRT }}>
+    <WindowContext.Provider
+      value={{
+        isMinimized,
+        isFullscreen,
+        crtEnabled,
+        reduceMotion,
+        minimize,
+        restore,
+        toggleFullscreen,
+        toggleCRT,
+        toggleReduceMotion,
+      }}
+    >
       {children}
     </WindowContext.Provider>
   );

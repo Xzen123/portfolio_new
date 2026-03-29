@@ -8,8 +8,5 @@ const rawBaseUrl = import.meta.env.VITE_API_BASE_URL || defaultBaseUrl;
 export const API_BASE_URL = rawBaseUrl.replace(/\/$/, '');
 
 export const API_ENDPOINTS = {
-  theme: `${API_BASE_URL}/api/theme`,
-  projects: `${API_BASE_URL}/api/projects?username=Xzen123`,
-  projectsStatus: `${API_BASE_URL}/api/projects/status`,
   contact: `${API_BASE_URL}/api/contact`,
 };

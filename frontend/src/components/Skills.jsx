@@ -99,8 +99,8 @@ export default function Skills() {
     `}<span style={{ color: 'var(--color-secondary)' }}>"Mongoose"</span>{`
   ],
   `}<span style={{ color: 'var(--color-primary)' }}>"integrations"</span>{`: [
-    `}<span style={{ color: 'var(--color-secondary)' }}>"GitHub API"</span>{`,
-    `}<span style={{ color: 'var(--color-secondary)' }}>"Gemini API"</span>{`,
+    `}<span style={{ color: 'var(--color-secondary)' }}>"Contact API"</span>{`,
+    `}<span style={{ color: 'var(--color-secondary)' }}>"Webhooks"</span>{`,
     `}<span style={{ color: 'var(--color-secondary)' }}>"SMTP"</span>{`
   ],
   `}<span style={{ color: 'var(--color-primary)' }}>"deploy"</span>{`: [
